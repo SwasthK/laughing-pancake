@@ -22,6 +22,8 @@ export default {
         trebuchet: 'Trebuchet MS'
       },
       colors: {
+        'bg-global': '#e6e4e4',
+        bgPrimary: '#e6e4e4',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -34,11 +36,15 @@ export default {
         },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
+          foreground: 'hsl(var(--primary-foreground))',
+          dark: 'hsl(var(--primary-dark))',
+          light: 'hsl(var(--primary-light))'
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))'
+          foreground: 'hsl(var(--secondary-foreground))',
+          dark: 'hsl(var(--secondary-dark))',
+          light: 'hsl(var(--secondary-light))'
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
