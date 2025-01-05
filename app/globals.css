@@ -13,6 +13,10 @@
 
 @layer base {
   :root {
+    --primary-dark: 0 0% 100%;
+    --primary-light: 0 0% 0%;
+    --secondary-dark: 0 0% 40%;
+    --secondary-light: 0 0% 40%;
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -74,7 +78,12 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-blue-400 text-foreground p-0 m-0;
     @apply font-sans antialiased;
+
   }
+}
+
+::-webkit-scrollbar{
+  display: none;
 }
