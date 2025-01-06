@@ -10,7 +10,7 @@ export function EventCard({
   description: string;
 }>) {
   return (
-    <div draggable className="flex  flex-col rounded-2xl max-w-[18rem]">
+    <div draggable className="flex  flex-col rounded-2xl max-w-full">
       <div className="h-40 w-full relative  bg-slate-900 rounded-2xl rounded-b-none">
         <div className="bg-[#ebe6e6] text- px-4 py-0 rounded-md text-sm text-secondary-light shadow-sm absolute bottom-3 right-3">
           BCA

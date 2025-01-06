@@ -50,7 +50,7 @@ const SelectItems = [
 export function FilterBar() {
   return (
     <>
-      <div className="flex text-gray-700 items-center cursor-pointer flex-wrap gap-3 font-normal px-8">
+      <div className="flex text-gray-700 items-center cursor-pointer flex-wrap gap-3 font-normal px-0">
         {SelectItems.map((item) => (
           <div
             key={item.value}
@@ -63,7 +63,7 @@ export function FilterBar() {
           <Select items={SelectItems} label="filter" />
         </div>
       </div>
-      <div className="flex text-gray-700 items-center cursor-pointer px-8 gap-3 font-normal  p-1 py-3">
+      <div className="flex text-gray-700 items-center cursor-pointer  gap-3 font-normal  py-1 py-3">
         <ComboBox comboBoxItems={comboBoxItems} header="department"></ComboBox>
       </div>
     </>

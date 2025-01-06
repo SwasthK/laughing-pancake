@@ -11,14 +11,14 @@ export default function Home() {
 
       <HotEvents />
 
-      <div className="w-full flex  flex-col items-start gap-2 py-4 px-3">
+      <div className="w-full flex flex-col items-start gap-2 py-4 px-3">
         <p className="">Explore all events 🎉</p>
-        <div className="flex gap-2 w-full  justify-between">
+        <div className="flex gap-2 w-full justify-between">
           <FilterBar></FilterBar>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-6">
         {Array.from({ length: 6 }).map((_, index) => (
           <EventCard
             key={index}
