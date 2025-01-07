@@ -23,6 +23,7 @@ export default {
       },
       colors: {
         'bg-global': '#e6e4e4',
+        bgSecondary: '#666666',
         bgPrimary: '#e6e4e4',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

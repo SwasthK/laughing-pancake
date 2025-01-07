@@ -14,8 +14,8 @@ const NavItems = [
     href: "/events",
   },
   {
-    name: "Contact",
-    href: "/contact",
+    name: "Support",
+    href: "/support",
   },
 ];
 

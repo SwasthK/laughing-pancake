@@ -63,7 +63,7 @@ export function FilterBar() {
           <Select items={SelectItems} label="filter" />
         </div>
       </div>
-      <div className="flex text-gray-700 items-center cursor-pointer  gap-3 font-normal  py-1 py-3">
+      <div className="flex text-gray-700 items-center cursor-pointer  gap-3 font-normal py-3">
         <ComboBox comboBoxItems={comboBoxItems} header="department"></ComboBox>
       </div>
     </>
