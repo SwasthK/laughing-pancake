@@ -1,3 +1,5 @@
+"use client"
+
 import { EventCard } from "@/components/EventCard";
 import { FilterBar } from "@/components/FilterBar";
 import { HotEvents } from "@/components/HotEvents";
