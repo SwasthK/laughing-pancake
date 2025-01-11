@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationBar } from "@/components/NavigationBar";
-
+import { SessionProvider } from "next-auth/react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,18 +29,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-bg-global dark:bg-[#262728]`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <main className="px-8 sm:px-20 lg:px-40">
-            
-            <NavigationBar />
-            {children}
-          </main>
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className="px-8 sm:px-20 lg:px-40">
+              <NavigationBar />
+              {children}
+            </main>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
