@@ -70,3 +70,12 @@ model Authenticator {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model EmailList {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  verified      Boolean   @default(false)
+  token         String?
+  token_expires DateTime?
+  createdAt     DateTime  @default(now())
+}
