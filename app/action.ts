@@ -1,10 +1,11 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 
 export async function googleLogin() {
-  await signIn("google", {
-    redirect: true,
-    redirectTo: "http://localhost:3000",
-  });
+  await signIn("google");
+}
+
+export async function Logout() {
+  await signOut();
 }

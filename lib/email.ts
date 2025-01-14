@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import prisma from "./prismaCleint";
+import { prisma } from "./prismaCleint";
+
 export function generateToken() {
   return crypto.getRandomValues(new Uint8Array(16)).join("");
 }
@@ -10,47 +11,58 @@ export async function createEmailList(
   expireTime: Date,
   verified: boolean = false
 ) {
-  const pre = await prisma.emailList.findFirst({
-    where: {
-      email: email,
-    },
-  });
-  if (pre) {
-    const updatedData = await prisma.emailList.update({
+  try {
+    const exist = await prisma.emailList.findFirst({
       where: {
         email: email,
       },
+    });
+
+    if (exist) {
+      const updatedData = await prisma.emailList.update({
+        where: {
+          email: email,
+        },
+        data: {
+          token: token,
+          token_expires: expireTime,
+          verified: verified,
+        },
+      });
+      return updatedData;
+    }
+    const data = prisma.emailList.create({
       data: {
+        email: email,
         token: token,
         token_expires: expireTime,
         verified: verified,
       },
     });
-    return updatedData;
+    return data;
+  } catch (err) {
+    console.log("API Error:", err);
+    return null;
   }
-  const data = prisma.emailList.create({
-    data: {
-      email: email,
-      token: token,
-      token_expires: expireTime,
-      verified: verified,
-    },
-  });
-  return data;
-  // Create email list
 }
 
 export async function setEmailVerified(email: string) {
-  const data = prisma.emailList.update({
-    where: {
-      email: email,
-    },
-    data: {
-      verified: true,
-    },
-  });
-  return data;
+  try {
+    const data = prisma.emailList.update({
+      where: {
+        email: email,
+      },
+      data: {
+        verified: true,
+      },
+    });
+    return data;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 }
+
 export async function sendEmail(email: string, token: string) {
   const transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
@@ -90,14 +102,29 @@ export async function verifyEmail(email: string, token: string) {
     return false;
   }
 
-  await prisma.emailList.update({
-    where: {
-      email: email,
-      token: token,
-    },
-    data: {
-      verified: true,
-    },
-  });
-  return true;
+  try {
+    await prisma.emailList.update({
+      where: {
+        email: email,
+        token: token,
+      },
+      data: {
+        verified: true,
+      },
+    });
+    return true;
+  } catch (err) {
+    console.log("API Error:", err);
+    return false;
+  }
+}
+
+export function validateEmail(email: string): boolean {
+  // Regex for validating email
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+}
+
+export function validateCollegeEmail(email: string): boolean {
+  return email.endsWith("@sdmcujire.in");
 }
