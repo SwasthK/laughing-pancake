@@ -23,7 +23,7 @@ import {
   DropdownMenu as DropdownMenuContainer,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
+  DropdownMenuItem as DropdownItemWrapper,
   DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
@@ -35,6 +35,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Tooltip } from "../Tooltip";
+import Link from "next/link";
+import React from "react";
 
 export function DropdownMenu() {
   return (
@@ -55,41 +57,41 @@ export function DropdownMenu() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem to="/profile/user">
             <User />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem to="/create">
             <Plus />
             <span>Create event</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem to="/">
             <CalendarDays />
             <span>My events</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem to="/leaderboard">
             <TrophyIcon />
             <span>Leaderboard</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem to="/">
             <Settings />
             <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem to="https://github.com/SwasthK/laughing-pancake" target="_blank">
           <Github />
           <span>GitHub</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem to="/">
           <LifeBuoy />
           <span>Support</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem to="/">
           <LogOut />
           <span>Log out</span>
         </DropdownMenuItem>
@@ -97,3 +99,19 @@ export function DropdownMenu() {
     </DropdownMenuContainer>
   );
 }
+
+const DropdownMenuItem = ({
+  to,
+  target,
+  children,
+}: {
+  to: string;
+  target?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Link href={to} target={target || "_self"}>
+      <DropdownItemWrapper>{children}</DropdownItemWrapper>
+    </Link>
+  );
+};
