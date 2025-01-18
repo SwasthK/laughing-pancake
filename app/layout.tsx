@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "./styles/prosemirror.css";
+import "./styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationBar } from "@/components/NavigationBar";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/sonner";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,6 +43,7 @@ export default function RootLayout({
               <NavigationBar />
               {children}
             </main>
+            <Toaster richColors/>
           </ThemeProvider>
         </SessionProvider>
       </body>

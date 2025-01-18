@@ -19,17 +19,26 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+type ComboBoxProps = {
+  header: string;
+  comboBoxItems: { value: string; label: string }[];
+  inverse?: boolean;
+  field?: any;
+};
+
 export function ComboBox({
   header,
   comboBoxItems,
-}: {
-  header: string;
-  comboBoxItems: { value: string; label: string }[];
-}) {
+  inverse,
+  field,
+}: ComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+
   React.useEffect(() => {
-    console.log(value);
+    if (field) {
+      field.onChange(value);
+    }
   }, [value]);
 
   return (
@@ -39,10 +48,14 @@ export function ComboBox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-fit justify-between  lg:rounded-md lg:px-4 lg:py-1.5 lg:h-fit h-10 px-4 py-2"
+          className={`${
+            inverse ? "w-full sm:max-w-60 xl:max-full" : "w-fit"
+          }  justify-between lg:rounded-md lg:px-4 lg:py-1.5 lg:h-fit h-10 px-4 py-2`}
         >
           {value ? (
-            comboBoxItems.find((item: any) => item.value === value)?.label
+            comboBoxItems
+              .find((item: any) => item.value === value)
+              ?.value.toLocaleUpperCase()
           ) : (
             <>
               <p className="hidden md:block">{`Select ${header}...`}</p>

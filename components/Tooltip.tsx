@@ -8,16 +8,15 @@ import {
 type TooltipProps = {
   className?: string;
   delayDuration?: number;
+  children: React.ReactNode;
+  content: string;
 };
 
 export function Tooltip({
   children,
   content,
   ...props
-}: TooltipProps & {
-  children: React.ReactNode;
-  content: string;
-}) {
+}: TooltipProps ) {
   return (
     <TooltipProvider delayDuration={props?.delayDuration || 0}>
       <TooltipContainer>
