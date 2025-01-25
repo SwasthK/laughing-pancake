@@ -1,6 +1,9 @@
 import { EventCard } from "@/components/EventCard";
-import { FilterBar } from "@/components/FilterBar";
-import { HotEvents } from "@/components/HotEvents";
+import { FilterBar } from "@/components/fiterbar";
+import { eventsData, hoteventsData } from "./data";
+import { Fragment } from "react";
+import { Carousel } from "@/components/hot-events";
+import { eventsDataType } from "@/types";
 
 export default function Home() {
   return (
@@ -9,7 +12,7 @@ export default function Home() {
         <p className="text-start ">Hottest Events 🔥</p>
       </div>
 
-      <HotEvents />
+      <Carousel events={hoteventsData}></Carousel>
 
       <div className="w-full flex flex-col items-start gap-2 py-4 px-3">
         <p className="">Explore all events 🎉</p>
@@ -19,12 +22,10 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-6">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <EventCard
-            key={index}
-            title="Event Name"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit."
-          />
+        {eventsData.map((event: eventsDataType) => (
+          <Fragment key={event.eventName}>
+            <EventCard {...event} />
+          </Fragment>
         ))}
       </div>
     </>

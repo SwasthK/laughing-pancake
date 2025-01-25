@@ -18,3 +18,15 @@ export type FormLabelProps = {
     className?: string;
     error?: string;
 };
+
+export type HotEventsData = {
+    eventName: string;
+    description: string;
+    department: string;
+    imgUrl: string;
+    visitLink: string;
+}
+
+export interface eventsDataType extends HotEventsData {
+    registerLink: string;
+}

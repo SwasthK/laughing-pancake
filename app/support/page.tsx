@@ -3,8 +3,8 @@ import { ChevronDown } from "lucide-react";
 
 export default function SupportPage() {
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-5 flex-col items-center gap-2 py-4 pb-8 h-full lg:h-[calc(100vh-150px)] place-items-center">
-      <div className="w-full text-center flex flex-col lg:col-span-2 items-center gap-2 py-20 rounded-md px-4 h-full border shadow-sm border-[#33333331] bg-[#E6F4EB]">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-5 flex-col items-center gap-6 py-4 pb-8 h-full lg:h-[calc(100vh-150px)] place-items-center">
+      <div className="w-full text-center flex flex-col lg:col-span-2 items-center gap-2 py-20 rounded-lg px-4 h-full  bg-[#DADADA]">
         <p className="text-3xl font-semibold">
           Get <span className="text-bgSecondary">Help </span>
         </p>
@@ -19,7 +19,7 @@ export default function SupportPage() {
         </p>
       </div>
 
-      <div className="w-full text-center flex flex-col lg:col-span-3 items-center gap-2 py-20 rounded-md px-4 h-full border shadow-sm border-[#33333331] bg-[#E6F4EB]">
+      <div className="w-full text-center flex flex-col lg:col-span-3 items-center gap-2 py-20 rounded-lg px-4 h-full  bg-[#DADADA]">
         <p className="text-3xl font-semibold">
           Repository
           <IconBrandGithub className="inline-block ml-2 h-8 w-8"></IconBrandGithub>
@@ -35,7 +35,7 @@ export default function SupportPage() {
         </p>
       </div>
 
-      <div className="w-full text-center flex flex-col items-center lg:col-span-5 gap-2 py-20 rounded-md px-4 h-full border shadow-sm border-[#33333331] bg-[#E6F4EB]">
+      <div className="w-full text-center flex flex-col items-center lg:col-span-5 gap-2 py-20 rounded-lg px-4 h-full  bg-[#DADADA]">
         <p className="text-3xl font-semibold">
           Meet the <span className="text-bgSecondary">Team </span>
           <IconBrandGithub className="inline-block ml-2 h-8 w-8"></IconBrandGithub>
