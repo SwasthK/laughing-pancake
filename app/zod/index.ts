@@ -1,5 +1,5 @@
 
-
+import { JSONContent } from "novel"
 import { z } from "zod"
 
 export const eventsSchema = z.object({
@@ -14,6 +14,7 @@ export const eventsSchema = z.object({
         .min(1, { message: "Participants must be at least 1." })
         .max(20, { message: "Participants cannot exceed 20." }),
 })
+
 
 export const createEventFormSchema = z.object({
     title: z.string({

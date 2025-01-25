@@ -56,7 +56,9 @@ const onError = (errors: any) => {
   toast.error(`Validation failed: ${errorMessages} .`);
 };
 
+
 export default function CreateEventForm() {
+
   const form = useForm<z.infer<typeof createEventFormSchema>>({
     resolver: zodResolver(createEventFormSchema),
     defaultValues: defaultValues,

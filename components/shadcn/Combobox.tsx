@@ -27,6 +27,13 @@ type ComboBoxProps = {
   field?: any;
 };
 
+type ComboBoxProps = {
+  header: string;
+  comboBoxItems: { value: string; label: string }[];
+  inverse?: boolean;
+  field?: any;
+};
+
 export function ComboBox({
   header,
   comboBoxItems,
@@ -35,8 +42,6 @@ export function ComboBox({
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  
-
   React.useEffect(() => {
     if (field) {
       field.onChange(value);
