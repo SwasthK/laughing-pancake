@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
   CreateDescriptionBlock,
@@ -8,6 +8,7 @@ import {
   CreateFormDateAndTimeBlock,
   CreateFormEventBlock,
   CreateFormVenueBlock,
+  CreateIndividualEventsBlock,
 } from "./blocks/FormComponents";
 import { Form } from "@/components/ui/form";
 
@@ -37,13 +38,14 @@ const defaultValues: z.infer<typeof createEventFormSchema> = {
   date: "",
   venue: "",
   registration: {
-    url: "",
+    individual: false,
     end: "",
   },
   phone: "",
   eventType: "meetup",
   organizedBy: "ba",
   brochure: "",
+  events: [],
 };
 
 const onError = (errors: any) => {
@@ -54,7 +56,9 @@ const onError = (errors: any) => {
   toast.error(`Validation failed: ${errorMessages} .`);
 };
 
-export function CreateEventForm() {
+
+export default function CreateEventForm() {
+
   const form = useForm<z.infer<typeof createEventFormSchema>>({
     resolver: zodResolver(createEventFormSchema),
     defaultValues: defaultValues,
@@ -93,6 +97,7 @@ export function CreateEventForm() {
       });
     } catch (error: any) {
       toast.error(error?.message);
+    } finally {
       setLoading(false);
     }
   }
@@ -110,6 +115,9 @@ export function CreateEventForm() {
             <CreateDescriptionBlock form={form}></CreateDescriptionBlock>
             <CreateFormVenueBlock form={form}></CreateFormVenueBlock>
             <CreateFormContactBlock form={form}></CreateFormContactBlock>
+            <CreateIndividualEventsBlock
+              form={form}
+            ></CreateIndividualEventsBlock>
           </div>
           <div className="flex w-full justify-end py-8 ">
             <Button

@@ -61,7 +61,7 @@ export function DropdownMenu() {
             <User />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem to="/create">
+          <DropdownMenuItem to="/events/create">
             <Plus />
             <span>Create event</span>
           </DropdownMenuItem>

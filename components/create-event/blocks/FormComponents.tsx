@@ -1,11 +1,64 @@
 import { cn } from "@/lib/utils";
 import { Input } from "../../ui/input";
 import { FormField } from "../../ui/form";
-import { X } from "lucide-react";
+import {
+  EllipsisVertical,
+  Loader,
+  PencilIcon,
+  Trash2Icon,
+  X,
+} from "lucide-react";
 import { Editor } from "../../editor/editor";
 import { ComboBox } from "../../shadcn/Combobox";
 import { FormHeaderProps, FormLabelProps } from "@/types";
-import React from "react";
+import React, { use, useEffect, useRef } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Check, ChevronsUpDown } from "lucide-react";
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { eventsSchema } from "@/app/zod";
+import { useDebouncedCallback } from "use-debounce";
+import { Checkbox } from "@/components/ui/checkbox";
+
 
 export const FormHeader = ({ label, split, className }: FormHeaderProps) => {
   return (
@@ -32,7 +85,7 @@ export const Label = ({ label, htmlFor, className, error }: FormLabelProps) => {
 export const CreateFormEventBlock = ({ form }: { form: any }) => {
   return (
     <div className="p-10 bg-[#DADADA]  flex flex-col gap-8 sm:gap-4 w-full  col-span-9  md:col-span-5 ">
-      <FormHeader label="Create" split="Event"></FormHeader>
+      <FormHeader label="Name" split="& Cover"></FormHeader>
       <div className="flex flex-col gap-8 xl:flex-row items-center w-full">
         <div className="grid w-full items-center gap-2.5 rounded-md relative max-w-sm">
           <FormField
@@ -194,186 +247,6 @@ export const CreateDescriptionBlock = ({ form }: { form: any }) => {
   );
 };
 
-// Custom block - to be deleted 
-// export const CreateFormVenueBlock = ({ form }: { form: any }) => {
-//   const [search, setSearch] = useState("");
-//   return (
-//     <div className="grid xl:flex xl:flex-col gap-5 col-span-9 xl:col-span-3">
-//       <div className="p-10 bg-[#DADADA] flex gap-4 flex-col">
-//         <FormHeader label="Organized" split="by"></FormHeader>
-//         <div className="grid w-full items-center gap-6 rounded-md relative max-w-sm">
-//           <FormField
-//             control={form.control}
-//             name="registration"
-//             render={({ field }) => (
-//               <div className="flex flex-col w-full gap-2.5">
-//                 <Label
-//                   error={
-//                     form.formState.errors?.registration?.url?.message ||
-//                     form.formState.errors?.registration?.message
-//                   }
-//                   htmlFor="registration"
-//                   label="Registration Link"
-//                 />
-
-//                 <div className="flex flex-col gap-3">
-//                   <Input
-//                     placeholder="Search for frameworks"
-//                     type="text"
-
-//                     className="text-sm "
-//                     onChange={(e) => setSearch(e.target.value)}
-//                   />
-
-//                   {search && (
-//                     <div className="bg-white rounded-md py-3 px-3 flex flex-col gap-3 max-h-48 overflow-y-scroll">
-//                       {frameworks.filter((framework) =>
-//                         framework.label
-//                           .toLowerCase()
-//                           .includes(search.toLowerCase())
-//                       ).length > 0 ? (
-//                         frameworks
-//                           .filter((framework) =>
-//                             framework.label
-//                               .toLowerCase()
-//                               .includes(search.toLowerCase())
-//                           )
-//                           .map((framework) => (
-//                             <Tooltip content={"ohhhhhhhhhhhhhhhhh"}>
-//                               <div
-//                                 onClick={() => {
-//                                   setSearch("");
-//                                   field.onChange({
-//                                     ...field.value,
-//                                     url: framework.value,
-//                                   });
-//                                 }}
-//                                 className="cursor-pointer text-sm "
-//                               >
-//                                 <p className="text-sm py-2 px-2 rounded-md hover:bg-[#DADADA] transition-colors duration-200 ease-in">
-//                                   {framework.label}
-//                                 </p>
-//                               </div>
-//                             </Tooltip>
-//                           ))
-//                       ) : (
-//                         <p>No result found</p>
-//                       )}
-//                     </div>
-//                   )}
-//                 </div>
-//               </div>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name="registration"
-//             render={({ field }) => (
-//               <div className="flex flex-col w-full gap-2.5">
-//                 <Label
-//                   error={form.formState.errors?.registration?.end?.message}
-//                   htmlFor="end"
-//                   label="End date *"
-//                 />
-//                 <Input
-//                   onChange={(e) =>
-//                     field.onChange({ ...field.value, end: e.target.value })
-//                   }
-//                   min="2025-01-02"
-//                   type="text"
-//                   placeholder=""
-//                   disabled
-//                   className=""
-//                 />
-//               </div>
-//             )}
-//           />
-//         </div>
-//       </div>
-
-//       <div className="p-10 bg-[#DADADA] flex gap-4 flex-col">
-//         <FormHeader label="Registration"></FormHeader>
-//         <div className="grid w-full items-center gap-6 rounded-md relative max-w-sm">
-//           <FormField
-//             control={form.control}
-//             name="registration"
-//             render={({ field }) => (
-//               <div className="flex flex-col w-full gap-2.5">
-//                 <Label
-//                   error={
-//                     form.formState.errors?.registration?.url?.message ||
-//                     form.formState.errors?.registration?.message
-//                   }
-//                   htmlFor="registration"
-//                   label="Registration Link"
-//                 />
-//                 <Input
-//                   onChange={(e) =>
-//                     field.onChange({ ...field.value, url: e.target.value })
-//                   }
-//                   type="text"
-//                   placeholder="Add link to registration"
-//                   className=""
-//                 />
-//               </div>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name="registration"
-//             render={({ field }) => (
-//               <div className="flex flex-col w-full gap-2.5">
-//                 <Label
-//                   error={form.formState.errors?.registration?.end?.message}
-//                   htmlFor="end"
-//                   label="End date *"
-//                 />
-//                 <Input
-//                   onChange={(e) =>
-//                     field.onChange({ ...field.value, end: e.target.value })
-//                   }
-//                   min="2025-01-02"
-//                   type="date"
-//                   placeholder=""
-//                   className=""
-//                 />
-//               </div>
-//             )}
-//           />
-//         </div>
-//       </div>
-
-//       <div className="p-10 bg-[#DADADA] flex gap-4 flex-col">
-//         <FormHeader label="Phone"></FormHeader>
-//         <div className="grid w-full items-center gap-2.5 rounded-md relative max-w-sm">
-//           <FormField
-//             control={form.control}
-//             name="phone"
-//             render={({ field }) => (
-//               <>
-//                 <Label
-//                   error={form.formState.errors?.phone?.message}
-//                   htmlFor="phone"
-//                   label="Phone number"
-//                 />
-//                 <Input
-//                   {...field}
-//                   type="tel"
-//                   minLength={10}
-//                   maxLength={10}
-//                   placeholder="Add phone number"
-//                   className=""
-//                 />
-//               </>
-//             )}
-//           />
-//         </div>
-//       </div>
-
-//     </div>
-//   );
-// };
-
 const courses = [
   {
     value: "bca",
@@ -469,31 +342,6 @@ export const CreateFormVenueBlock = ({ form }: { form: any }) => {
             render={({ field }) => (
               <div className="flex flex-col w-full gap-2.5">
                 <Label
-                  error={
-                    form.formState.errors?.registration?.url?.message ||
-                    form.formState.errors?.registration?.message
-                  }
-                  htmlFor="registration"
-                  label="Registration Link"
-                />
-                <Input
-                  onChange={(e) =>
-                    field.onChange({ ...field.value, url: e.target.value })
-                  }
-                  type="text"
-                  placeholder="Add link to registration"
-                  className=""
-                />
-              </div>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="registration"
-            render={({ field }) => (
-              <div className="flex flex-col w-full gap-2.5">
-                <Label
                   error={form.formState.errors?.registration?.end?.message}
                   htmlFor="end"
                   label="End date *"
@@ -507,6 +355,37 @@ export const CreateFormVenueBlock = ({ form }: { form: any }) => {
                   placeholder=""
                   className=""
                 />
+              </div>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="registration"
+            render={({ field }) => (
+              <div className="flex flex-col w-full gap-2.5">
+                <Label
+                  error={
+                    form.formState.errors?.registration?.individual?.message ||
+                    form.formState.errors?.registration?.message
+                  }
+                  htmlFor="individual"
+                  label="Allow individual registration ?"
+                />
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={form.getValues("registration").individual}
+                    onCheckedChange={(checked) =>
+                      form.setValue("registration", {
+                        ...form.getValues("registration"),
+                        individual: checked,
+                      })
+                    }
+                  />
+                  <label className="text-sm  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Participants can register without a team
+                  </label>
+                </div>
               </div>
             )}
           />
@@ -533,7 +412,7 @@ export const CreateFormContactBlock = ({ form }: { form: any }) => {
                     form.formState.errors?.venue?.message
                   }
                   htmlFor="venue"
-                  label="venue"
+                  label="Add venue location"
                 />
                 <Input
                   {...field}
@@ -602,44 +481,484 @@ export const CreateFormContactBlock = ({ form }: { form: any }) => {
   );
 };
 
-// TODO - Split blocks by reusing duplicate classes
+type newEventType = {
+  name: string;
+  caption: string;
+  head: { name: string; roll: string }[];
+  participants: null | number;
+};
 
-// const formfielditems=[{
-//   control:form.control,
-//   name:"phone",
+export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
+  const [newEvent, setNewEvent] = useState<newEventType>({
+    name: "",
+    caption: "",
+    head: [],
+    participants: null,
+  });
+  const [ermsg, setErmsg] = useState<string>("");
+  const [head, setHead] = useState<{ name: string; roll: string }[]>([]);
+  const [filteredHeads, setFilteredHeads] = useState<any[]>([]);
+  const [load, setLoad] = useState<boolean>(false);
 
-// }]
+  const isErrors = (): boolean => {
+    const response = eventsSchema.safeParse({ ...newEvent, head: head });
+    if (!response.success) {
+      setErmsg(response.error.errors[0].message);
+      return true;
+    }
+    return false;
+  };
 
-// const FormBlock = ({
-//   children,
-//   ...props
-// }: {
-//   children: React.ReactNode;
-//   className?: string;
-// }) => {
-//   return (
-//     <div className="grid w-full items-center gap-6 rounded-md relative max-w-sm">
-//       <FormField
-//         control={form.control}
-//         name="phone"
-//         render={({ field }) => (
-//           <div className="flex flex-col w-full gap-2.5">
-//             <Label
-//               error={form.formState.errors?.phone?.message}
-//               htmlFor="phone"
-//               label="Phone number"
-//             />
-//             <Input
-//               {...field}
-//               type="tel"
-//               minLength={10}
-//               maxLength={10}
-//               placeholder="Add a contact number"
-//               className=""
-//             />
-//           </div>
-//         )}
-//       />
-//     </div>
-//   );
-// };
+  const handleAddEvent = () => {
+    if (isErrors()) {
+      return;
+    }
+    form.setValue("events", [
+      ...(form.getValues("events") || []),
+      { ...newEvent, head: head },
+    ]);
+
+    setErmsg("");
+    toast.message(`Event ${newEvent.name} added successfully`);
+    setNewEvent({ name: "", caption: "", head: [], participants: null });
+    setHead([]);
+  };
+
+  const handleRemoveEvent = (index: number) => {
+    toast.message(`Event removed successfully`);
+    form.setValue(
+      "events",
+      form.getValues("events").filter((_: any, i: number) => i !== index)
+    );
+    form.trigger("events");
+  };
+
+  const handleEditEvent = (index: number, updatedEvent: newEventType) => {
+    if (isErrors()) {
+      toast.error(`Validation failed: ${ermsg}`);
+      setNewEvent({ name: "", caption: "", head: [], participants: null });
+      return;
+    }
+
+    const updatedEvents = form
+      .getValues("events")
+      .map((event: newEventType, i: number) =>
+        i === index ? updatedEvent : event
+      );
+
+    form.setValue("events", updatedEvents);
+
+    setNewEvent({ name: "", caption: "", head: [], participants: null });
+    setErmsg("");
+    setHead([]);
+    toast.success("Event updated successfully", {
+      description: (
+        <>
+          <code>
+            <pre>{JSON.stringify(updatedEvent, null, 2)}</pre>
+          </code>
+        </>
+      ),
+    });
+  };
+
+  let headsData = [
+    { roll: 220982, name: "Alice" },
+    { roll: 220983, name: "Bob" },
+    { roll: 220984, name: "Carol" },
+    { roll: 220985, name: "Dave" },
+    { roll: 220986, name: "Eve" },
+    { roll: 220987, name: "Frank" },
+    { roll: 220988, name: "Grace" },
+    { roll: 220989, name: "Hank" },
+    { roll: 220990, name: "Ivy" },
+  ];
+
+  const handleValueChange = useDebouncedCallback(async (e: string) => {
+    try {
+      if (e.length < 4 || e === "") {
+        return;
+      }
+      setLoad(true);
+
+      // API CALL -------------------->
+
+      // const response = await axios.get("/api/heads", {
+      //   params: { query: e },
+      // });
+      // if (response.data.length > 0) {
+      //    setFilteredHeads(response.data);
+      // } else {
+      //   setFilteredHeads([]);
+      // }
+
+      setTimeout(() => {
+        const data = headsData.some((head) => head.roll.toString().includes(e))
+          ? headsData.filter((head) => head.roll.toString().includes(e))
+          : [];
+        setFilteredHeads(data);
+        setLoad(false);
+      }, 500);
+    } catch (error) {
+      setFilteredHeads([]);
+      toast.error("Failed to fetch data");
+      setLoad(false);
+    }
+  }, 800);
+
+  return (
+    <div className="grid grid-cols-10 gap-5 col-span-9">
+      <div className="xl:col-span-6 col-span-10 lg:col-span-5 flex flex-col gap-4 p-10 bg-[#DADADA]">
+        <FormHeader label="Add" split="Events"></FormHeader>
+        <div className="flex flex-col gap-4  max-w-sm">
+          <div className="flex flex-col gap-2.5">
+            <Label error={ermsg} htmlFor="events" label="Events" />
+            <Input
+              value={newEvent.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setNewEvent({ ...newEvent, name: e.target.value })
+              }
+              type="text"
+              placeholder="Add event name"
+              className="text-sm"
+            />
+            <Input
+              value={newEvent.caption}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setNewEvent({ ...newEvent, caption: e.target.value })
+              }
+              type="text"
+              placeholder="Add event caption"
+              className="text-sm"
+            />
+            <EditEventheads
+              filteredHeads={filteredHeads}
+              handleValueChange={handleValueChange}
+              load={load}
+              setHead={setHead}
+              head={head}
+            />
+            {head.length > 0 && (
+              <div className="w-full px-2 text-sm flex flex-wrap gap-4">
+                {head.map((key: { roll: string; name: string }) => (
+                  <p className="bg-[#E6E4E4] px-2 py-1 rounded-md">
+                    {key.roll} - {key.name}
+                  </p>
+                ))}
+              </div>
+            )}
+            <Input
+              value={
+                !newEvent.participants?.toString() ? "" : newEvent.participants
+              }
+              maxLength={2}
+              minLength={2}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const value: string = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  setNewEvent({
+                    ...newEvent,
+                    participants: value === "" ? 0 : Number(value),
+                  });
+                }
+              }}
+              type="text"
+              placeholder="Add event participants"
+              className="text-sm"
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={handleAddEvent}
+            className="btn btn-primary"
+          >
+            Add Event
+          </Button>
+        </div>
+      </div>
+
+      <div className="xl:col-span-4 lg:col-span-5 col-span-10 bg-[#DADADA]">
+        {form.getValues("events").length > 0 ? (
+          <ScrollArea className="h-[30rem] w-full rounded-md border p-8">
+            {form.getValues("events").map((event: any, index: number) => (
+              <div className="px-1 py-3">
+                <div className="bg-[#E6E4E4] border cursor-pointer rounded-md p-4 flex flex-col relative">
+                  <h3 className="font-mono font-semibold text-xl">
+                    #{index + 1} {event.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 ml-2">{event.caption}</p>
+                  <p className="font-mono text-sm mt-2">
+                    Participants - {event.participants}
+                  </p>
+                  <div className="mt-3">
+                    <p className="font-semibold text-sm">Coordinators:</p>
+                    <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
+                      {event.head.map((key: any, idx: number) => (
+                        <li key={idx}>{key.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Popover>
+                    <PopoverTrigger>
+                      <EllipsisVertical className="h-6 w-6 cursor-pointer absolute bottom-4 right-4  hover:bg-[#DADADA] transition-colors duration-300 ease-in p-1 rounded-full bg" />
+                    </PopoverTrigger>
+                    <PopoverContent className="m-4 w-fit flex flex-col gap-2 p-2">
+                      <Dialog>
+                        <DialogTrigger
+                          asChild
+                          className="p-0 m-0 w-full"
+                          onClick={() => {
+                            setNewEvent(event);
+                          }}
+                        >
+                          <div className=" flex gap-2 text-sm  items-center cursor-pointer hover:bg-[#DADADA] px-4 py-2 rounded-md">
+                            <PencilIcon className="h-[.9rem] w-[.9rem]" />
+                            <p>Edit</p>
+                          </div>
+                        </DialogTrigger>
+
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Edit {event.name}</DialogTitle>
+                            <DialogDescription>
+                              Make changes to your event here. Click save when
+                              you're done.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label
+                                htmlFor="eventname"
+                                label="Name"
+                                className="text-center"
+                              ></Label>
+                              <Input
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) =>
+                                  setNewEvent({
+                                    ...newEvent,
+                                    name: e.target.value,
+                                  })
+                                }
+                                defaultValue={event.name}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label
+                                htmlFor="eventcaption"
+                                label="Caption"
+                                className="text-center"
+                              ></Label>
+                              <Input
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) =>
+                                  setNewEvent({
+                                    ...newEvent,
+                                    caption: e.target.value,
+                                  })
+                                }
+                                defaultValue={event.caption}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label
+                                htmlFor="eventchead"
+                                label="Head"
+                                className="text-center"
+                              ></Label>
+                              <EditEventheads
+                                filteredHeads={filteredHeads}
+                                handleValueChange={handleValueChange}
+                                load={load}
+                                setHead={setHead}
+                                head={head}
+                                defaultValue={event.head}
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label
+                                htmlFor="eventparticipants"
+                                label="Participants"
+                                className="text-center"
+                              ></Label>
+                              <Input
+                                defaultValue={event.participants}
+                                maxLength={2}
+                                minLength={2}
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  const value: string = e.target.value;
+                                  if (/^\d*$/.test(value)) {
+                                    setNewEvent({
+                                      ...newEvent,
+                                      participants:
+                                        value === "" ? 0 : Number(value),
+                                    });
+                                  }
+                                }}
+                                type="text"
+                                placeholder="Add event participants"
+                                className="col-span-3"
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <DialogClose>
+                              <Button
+                                onClick={() =>
+                                  handleEditEvent(index, {
+                                    ...newEvent,
+                                    head: head,
+                                  })
+                                }
+                              >
+                                Save changes
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+
+                      <AlertDialog>
+                        <AlertDialogTrigger className="flex gap-2 text-sm items-center cursor-pointer hover:bg-[#DADADA] px-4 py-2 rounded-md">
+                          <Trash2Icon className="h-[.9rem] w-[.9rem]" />
+                          <p>Remove</p>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will remove the
+                              selected event .
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleRemoveEvent(index)}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            ))}
+          </ScrollArea>
+        ) : (
+          <div className="h-full w-full flex justify-center items-center py-8">
+            <p className="font-mono text-sm">No events added yet</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const EditEventheads = ({
+  head,
+  setHead,
+  filteredHeads,
+  load,
+  handleValueChange,
+  defaultValue,
+}: {
+  head: { name: string; roll: string }[];
+  setHead: React.Dispatch<React.SetStateAction<any>>;
+  filteredHeads: any;
+  load: boolean;
+  handleValueChange: any;
+  defaultValue?: newEventType;
+}) => {
+  useEffect(() => {
+    setHead(defaultValue || []);
+  }, []);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          className="w-[200px] justify-between"
+        >
+          Assign heads
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput
+            placeholder="Search roll number..."
+            onValueChange={handleValueChange}
+          />
+          <CommandList>
+            {load ? (
+              <p className="flex w-full justify-center items-center gap-3 py-2 text-sm">
+                <Loader className="w-4 h-4 animate-spin"></Loader>
+                loading
+              </p>
+            ) : (
+              <CommandEmpty>No heads found.</CommandEmpty>
+            )}
+            <CommandGroup>
+              {filteredHeads?.map((key: any) => (
+                <CommandItem
+                  key={key.roll}
+                  value={key.roll.toString()}
+                  onSelect={(currentValue) => {
+                    setHead((prevHead: { name: string; roll: number }[]) => {
+                      const exists = prevHead?.some(
+                        (e: { name: string; roll: number }) =>
+                          e.roll === Number(currentValue)
+                      );
+                      if (exists) {
+                        toast.message(`${key.name} removed as a head `);
+                        return prevHead.filter(
+                          (e: { name: string; roll: number }) =>
+                            e.roll != Number(currentValue)
+                        );
+                      } else {
+                        if (head?.length >= 2) {
+                          toast.error("Max 2 heads reached");
+                          return prevHead;
+                        } else {
+                          return [
+                            ...prevHead,
+                            {
+                              roll: Number(currentValue),
+                              name: key.name,
+                            },
+                          ];
+                        }
+                      }
+                    });
+                  }}
+                >
+                  {key.roll} - {key.name}
+                  <Check
+                    className={cn(
+                      "ml-auto",
+                      head.some((e: any) => e.name === key.name)
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
