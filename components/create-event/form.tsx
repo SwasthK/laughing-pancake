@@ -1,73 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   CreateDescriptionBlock,
+  CreateEventFormPreferencesBlock,
   CreateFormContactBlock,
   CreateFormDateAndTimeBlock,
   CreateFormEventBlock,
   CreateFormVenueBlock,
-  CreateIndividualEventsBlock,
-} from "./blocks/FormComponents";
+} from "./blocks/form-components"
 import { Form } from "@/components/ui/form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createEventFormSchema } from "@/app/zod";
+import { useForm } from "react-hook-form";
+import { createEventFormSchema } from "@/zod";
 import { Loader, SearchCheck } from "lucide-react";
 import { toast } from "sonner";
-
-const defaultValues: z.infer<typeof createEventFormSchema> = {
-  title: "",
-  picture: undefined as unknown as File,
-  description: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-        content: [],
-      },
-    ],
-  },
-  time: {
-    hour: 0,
-    minute: 0,
-  },
-  date: "",
-  venue: "",
-  registration: {
-    individual: false,
-    end: "",
-  },
-  phone: "",
-  eventType: "meetup",
-  organizedBy: "ba",
-  brochure: "",
-  events: [],
-};
-
-const onError = (errors: any) => {
-  const errorMessages = Object.values(errors)
-    .map((error: any) => error.message)
-    .join(", ");
-
-  toast.error(`Validation failed: ${errorMessages} .`);
-};
-
+import { defaultValues, normalizedData, onError } from "./form-methods";
 
 export default function CreateEventForm() {
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof createEventFormSchema>>({
     resolver: zodResolver(createEventFormSchema),
     defaultValues: defaultValues,
   });
 
-  const [loading, setLoading] = useState(false);
-
-  function onSubmit(data: z.infer<typeof createEventFormSchema>) {
+  function onSubmit(formdata: z.infer<typeof createEventFormSchema>) {
+    console.log("Data",formdata)
+    const data = normalizedData(formdata);
+    if (!data) return;
+    
     setLoading(true);
+
+    // Actual API Call goes here
     try {
       const promise = () =>
         new Promise((resolve) =>
@@ -96,7 +63,7 @@ export default function CreateEventForm() {
         dismissible: true,
       });
     } catch (error: any) {
-      toast.error(error?.message);
+      toast.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -115,9 +82,9 @@ export default function CreateEventForm() {
             <CreateDescriptionBlock form={form}></CreateDescriptionBlock>
             <CreateFormVenueBlock form={form}></CreateFormVenueBlock>
             <CreateFormContactBlock form={form}></CreateFormContactBlock>
-            <CreateIndividualEventsBlock
+            <CreateEventFormPreferencesBlock
               form={form}
-            ></CreateIndividualEventsBlock>
+            ></CreateEventFormPreferencesBlock>
           </div>
           <div className="flex w-full justify-end py-8 ">
             <Button
@@ -133,6 +100,7 @@ export default function CreateEventForm() {
           </div>
         </form>
       </Form>
+      {/* // Preview of Editors Data */}
       {/* <EditorPreview jsonData={sampleData}></EditorPreview> */}
     </div>
   );

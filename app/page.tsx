@@ -1,6 +1,6 @@
 import { EventCard } from "@/components/EventCard";
 import { FilterBar } from "@/components/fiterbar";
-import { eventsData, hoteventsData } from "./data";
+import { eventsData, hoteventsData } from "../lib/data";
 import { Fragment } from "react";
 import { Carousel } from "@/components/hot-events";
 import { eventsDataType } from "@/types";

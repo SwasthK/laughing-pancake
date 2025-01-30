@@ -3,6 +3,7 @@ import { Input } from "../../ui/input";
 import { FormField } from "../../ui/form";
 import {
   EllipsisVertical,
+  Info,
   Loader,
   PencilIcon,
   Trash2Icon,
@@ -10,7 +11,7 @@ import {
 } from "lucide-react";
 import { Editor } from "../../editor/editor";
 import { ComboBox } from "../../shadcn/Combobox";
-import { FormHeaderProps, FormLabelProps } from "@/types";
+import { FormHeaderProps, FormLabelProps, FormType } from "@/types";
 import React, { use, useEffect, useRef } from "react";
 import {
   Popover,
@@ -55,10 +56,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { eventsSchema } from "@/app/zod";
+import { eventsSchema } from "@/zod";
 import { useDebouncedCallback } from "use-debounce";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const FormHeader = ({ label, split, className }: FormHeaderProps) => {
   return (
@@ -344,15 +352,19 @@ export const CreateFormVenueBlock = ({ form }: { form: any }) => {
                 <Label
                   error={form.formState.errors?.registration?.end?.message}
                   htmlFor="end"
-                  label="End date *"
+                  label="End date ( Optional )"
                 />
                 <Input
+                  defaultValue={form.getValues("date")}
                   onChange={(e) =>
-                    field.onChange({ ...field.value, end: e.target.value })
+                    field.onChange({
+                      ...field.value,
+                      end: e.target.value,
+                    })
                   }
-                  min="2025-01-02"
+                  min="2024-01-01"
+                  max={form.getValues("date")}
                   type="date"
-                  placeholder=""
                   className=""
                 />
               </div>
@@ -370,7 +382,7 @@ export const CreateFormVenueBlock = ({ form }: { form: any }) => {
                     form.formState.errors?.registration?.message
                   }
                   htmlFor="individual"
-                  label="Allow individual registration ?"
+                  label="Allow individual registration ? ( Optional )"
                 />
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -437,12 +449,12 @@ export const CreateFormContactBlock = ({ form }: { form: any }) => {
                 <Label
                   error={form.formState.errors?.brochure?.message}
                   htmlFor="brochure"
-                  label="Add brochure"
+                  label="Add brochure or poster link"
                 />
                 <Input
                   {...field}
                   type="text"
-                  placeholder="Attach drive link"
+                  placeholder="Attach drive or external link"
                   className=""
                 />
               </>
@@ -476,6 +488,76 @@ export const CreateFormContactBlock = ({ form }: { form: any }) => {
             )}
           />
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const CreateEventFormPreferencesBlock = ({ form }: { form: any }) => {
+
+  const handleSelect = (value: string) => {
+    form.setValue("formType", value);
+    form.trigger("formType");
+  };
+
+  return (
+    <div className=" gap-5 col-span-9">
+      <div className="xl:col-span-6 col-span-10 lg:col-span-5 flex flex-col gap-4 p-10 bg-[#DADADA] relative">
+        <FormHeader label="Choose" split="your form"></FormHeader>
+        <Select onValueChange={handleSelect}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select form type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="NONE">None</SelectItem>
+              <SelectItem value="INTERNAL">Internal</SelectItem>
+              <SelectItem value="EXTERNAL">External</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <div className="absolute top-2 right-2">
+          <Dialog>
+            <DialogTrigger asChild className="p-0 m-0 w-full ">
+              <div className=" flex gap-2 text-sm  items-center cursor-pointer hover:bg-[#DADADA] px-4 py-2 rounded-md">
+                <Info className="h-[.9rem] w-[.9rem]" />
+              </div>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Form types</DialogTitle>
+                <DialogDescription>
+                  <ol className="mt-1 text-black">
+                    <li className="font-semibold ">None</li> - no registration
+                    required (anyone can attend)
+                    <li className="font-semibold">Internal</li> - Use Built - in
+                    form (recommended)
+                    <li className="font-semibold">External</li> - Use External
+                    forms & embed the link (eg. google form)
+                  </ol>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+        {form.getValues("formType") === FormType.EXTERNAL && (
+          <Input
+            type="text"
+            defaultValue={form.getValues("link")} 
+            placeholder="Add a registration link"
+            className="max-w-sm"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              form.setValue("link", e.target.value)
+            }
+          />
+        )}
+        {form.getValues("formType") === FormType.NONE && (
+          <Label htmlFor="none" label="Anybody can attend the event" />
+        )}
+        {form.getValues("formType") === FormType.INTERNAL && (
+          <CreateIndividualEventsBlock form={form} />
+        )}
       </div>
     </div>
   );
@@ -607,8 +689,8 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
   }, 800);
 
   return (
-    <div className="grid grid-cols-10 gap-5 col-span-9">
-      <div className="xl:col-span-6 col-span-10 lg:col-span-5 flex flex-col gap-4 p-10 bg-[#DADADA]">
+    <div className="grid grid-cols-10 gap-5 col-span-9 ">
+      <div className="xl:col-span-6 col-span-10 lg:col-span-5 flex flex-col gap-4 p-10 ">
         <FormHeader label="Add" split="Events"></FormHeader>
         <div className="flex flex-col gap-4  max-w-sm">
           <div className="flex flex-col gap-2.5">
@@ -677,12 +759,12 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
         </div>
       </div>
 
-      <div className="xl:col-span-4 lg:col-span-5 col-span-10 bg-[#DADADA]">
+      <div className="xl:col-span-4 lg:col-span-5 col-span-10 bg-[#E6E4E4]">
         {form.getValues("events").length > 0 ? (
           <ScrollArea className="h-[30rem] w-full rounded-md border p-8">
             {form.getValues("events").map((event: any, index: number) => (
               <div className="px-1 py-3">
-                <div className="bg-[#E6E4E4] border cursor-pointer rounded-md p-4 flex flex-col relative">
+                <div className="bg-[#DADADA] border cursor-pointer rounded-md p-4 flex flex-col relative">
                   <h3 className="font-mono font-semibold text-xl">
                     #{index + 1} {event.name}
                   </h3>

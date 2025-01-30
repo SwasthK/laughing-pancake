@@ -1,4 +1,3 @@
-
 import { JSONContent } from "novel";
 
 export interface EditorProps {
@@ -29,4 +28,28 @@ export type HotEventsData = {
 
 export interface eventsDataType extends HotEventsData {
     registerLink: string;
+}
+
+export enum FormType {
+    NONE = "NONE",
+    INTERNAL = "INTERNAL",
+    EXTERNAL = "EXTERNAL",
+}
+
+export enum OrganizedBy {
+    BCA = "bca",
+    BBA = "bba",
+    BCom = "bcom",
+    BSc = "bsc",
+    BA = "ba",
+}
+
+export enum EventType {
+    INTERCOLLEGIATE = "intercollegiate",
+    INTERDEPARTMENT = "interdepartment",
+    SEMINAR = "seminar",
+    WORKSHOP = "workshop",
+    HACKATHON = "hackathon",
+    CONFERENCE = "conference",
+    MEETUP = "meetup",
 }

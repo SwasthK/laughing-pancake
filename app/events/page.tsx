@@ -5,7 +5,7 @@ import {
   IconClearAll,
   IconSquareRoundedCheck,
 } from "@tabler/icons-react";
-import { eventsData } from "../data";
+import { eventsData } from "../../lib/data";
 import { Fragment } from "react";
 import { eventsDataType } from "@/types";
 

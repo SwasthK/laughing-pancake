@@ -1,10 +1,9 @@
-
-import { JSONContent } from "novel"
+import { EventType, FormType, OrganizedBy } from "@/types"
 import { z } from "zod"
 
 export const eventsSchema = z.object({
-    name: z.string({ message: "Invalid name" }).min(2, { message: "Event name seems too short" }),
-    caption: z.string({ message: "Invalid caption" }).min(10, { message: "Event caption seems too short" }),
+    name: z.string({ message: "Invalid event name" }).min(2, { message: "Event name seems too short" }),
+    caption: z.string({ message: "Invalid event caption" }).min(5, { message: "Event caption seems too short" }),
     head: z.array(z.object({
         name: z.string({ message: "Invalid name" }).min(2, { message: "Head name seems too short" }),
         roll: z.number({ message: "Invalid roll-number" }).min(10000, { message: "Invalid roll-number" }),
@@ -15,6 +14,9 @@ export const eventsSchema = z.object({
         .max(20, { message: "Participants cannot exceed 20." }),
 })
 
+export const eventsArraySchema = z.array(eventsSchema).length(1, { message: "either switch form type to 'NONE' or 'EXTERNAL or add atleast one event" })
+
+export const linkSchema = z.string({ message: "Invalid registration link" }).url({ message: "either switch form type to 'NONE' or 'INTERNAL or add proper url" })
 
 export const createEventFormSchema = z.object({
     title: z.string({
@@ -29,8 +31,8 @@ export const createEventFormSchema = z.object({
         message: "Invalid picture",
     }),
     description: z.object({
-        type: z.string({ message: "Invalid content" }),
-        content: z.any({ message: "Invalid content" }),
+        type: z.string({ message: "Invalid content for event description" }),
+        content: z.any({ message: "Invalid content for event description" }),
     }).optional(),
     time: z.object({
         hour: z.number({
@@ -45,17 +47,15 @@ export const createEventFormSchema = z.object({
         message: "Invalid date",
     }).date(),
     venue: z.string({
-        message: "Invalid venue",
+        message: "Invalid venue location"
     }).min(2, {
         message: "Venue seems too short",
     }).max(30, {
         message: "Venue seems too long",
     }),
     registration: z.object({
-        individual: z.boolean({ message: "Invalid Value" }).optional(),
-        end: z.string({
-            message: "Invalid date",
-        }).date().optional(),
+        individual: z.boolean({ message: "Invalid value for individual are allowed or not" }).default(false),
+        end: z.string({ message: "Invalid end date for registration" }),
     }, {
         message: "Invalid registration",
     }),
@@ -66,30 +66,10 @@ export const createEventFormSchema = z.object({
     }).max(10, {
         message: "Invalid phone number",
     }),
-    organizedBy: z.enum(["bca", "bba", "bcom", "bsc", "ba"], {
-        message: "Invalid input",
-    }),
-    eventType: z.enum([
-        "intercollegiate",
-        "interdepartment",
-        "seminar",
-        "workshop",
-        "hackathon",
-        "conference",
-        "meetup"], {
-        message: "Invalid input"
-    }),
-    brochure: z.string({ message: "Invalid url" }).url({ message: "Invalid url" }),
-    events: z.array(eventsSchema)
+    organizedBy: z.nativeEnum(OrganizedBy, { message: "Inavlid choice for organized by" }),
+    eventType: z.nativeEnum(EventType, { message: "Invalid choice for event type" }),
+    brochure: z.string({ message: "Invalid brochure link" }).url({ message: "Invalid brochure link" }),
+    events: z.array(eventsSchema, { message: "Something went wrong while getting events data" }),
+    formType: z.nativeEnum(FormType, { message: "Invalid choice for form type" }).default(FormType.NONE),
+    link: z.string({ message: "Invalid registration link" }),
 })
-
-
-// { roll: 220982, name: "Alice" },
-// { roll: 220983, name: "Bob" },
-// { roll: 220984, name: "Carol" },
-// { roll: 220985, name: "Dave" },
-// { roll: 220986, name: "Eve" },
-// { roll: 220987, name: "Frank" },
-// { roll: 220988, name: "Grace" },
-// { roll: 220989, name: "Hank" },
-// { roll: 220990, name: "Ivy" },
