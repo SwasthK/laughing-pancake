@@ -580,7 +580,8 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
   const [head, setHead] = useState<{ name: string; roll: string }[]>([]);
   const [filteredHeads, setFilteredHeads] = useState<any[]>([]);
   const [load, setLoad] = useState<boolean>(false);
-
+  // const [headsData, setHeadsData] =
+  useState<{ name: string; roll: number }[]>();
   const isErrors = (): boolean => {
     const response = eventsSchema.safeParse({ ...newEvent, head: head });
     if (!response.success) {
@@ -643,13 +644,27 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
     });
   };
 
+  // useEffect(() => {
+  //   const fetchHeads = async () => {
+  //     try {
+  //       const response = await fetch("/api/get-user");
+  //       const data = await response.json();
+  //       console.log(data);
+  //       setHeadsData(data.data);
+  //     } catch (error) {
+  //       toast.error("Failed to fetch data");
+  //     }
+  //   };
+  //   fetchHeads();
+  // }, []);
+
   let headsData = [
     { roll: 220931, name: "Shainil" },
     { roll: 220981, name: "Swasthik" },
-    { roll: 220984, name: "Carol" },
-    { roll: 220985, name: "Dave" },
-    { roll: 220986, name: "Eve" },
-    { roll: 220987, name: "Frank" },
+    { roll: 220982, name: "Carol" },
+    { roll: 220983, name: "Dave" },
+    { roll: 220984, name: "Eve" },
+    { roll: 220985, name: "Frank" },
     { roll: 220988, name: "Grace" },
     { roll: 220989, name: "Hank" },
     { roll: 220990, name: "Ivy" },
@@ -674,7 +689,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
       // }
 
       setTimeout(() => {
-        const data = headsData.some((head) => head.roll.toString().includes(e))
+        const data = headsData?.some((head) => head.roll.toString().includes(e))
           ? headsData.filter((head) => head.roll.toString().includes(e))
           : [];
         setFilteredHeads(data);

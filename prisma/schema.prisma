@@ -96,6 +96,8 @@ model EventHead {
 
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+
+  @@unique([userId, eventId])
 }
 
 model Event {
@@ -108,11 +110,13 @@ model Event {
   EventHead   EventHead[]
   Participant Participant[]
   Program     Program       @relation(fields: [programId], references: [programId], onDelete: Cascade)
+
+  @@unique([programId, name])
 }
 
 model Team {
   teamId           String     @id @default(cuid())
-  teamName         String
+  teamName         String? //remove this 
   programId        String
   teamLeaderId     String
   teamStatus       TeamStatus
@@ -121,6 +125,8 @@ model Team {
   TeamLeader  User          @relation("TeamLeader", fields: [teamLeaderId], references: [id], onDelete: Cascade)
   Program     Program       @relation(fields: [programId], references: [programId], onDelete: Cascade)
   Participant Participant[]
+
+  @@unique([programId, teamLeaderId])
 }
 
 model Participant {
@@ -133,6 +139,9 @@ model Participant {
   Team  Team  @relation(fields: [teamId], references: [teamId], onDelete: Cascade)
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@unique([userId, teamId])
 }
 
 //TODO:

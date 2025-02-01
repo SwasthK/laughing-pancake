@@ -22,24 +22,32 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Badge } from "../ui/badge";
+import { Underdog } from "next/font/google";
+import { toast } from "sonner";
 export default function EventRegisterCard({
   eventId,
   teamId,
   title,
   caption,
-  registered,
+  participants,
+  teamSize,
   useremail,
+  programSlug,
+  userExist,
 }: {
   eventId: string;
   teamId: string;
   title: string;
   caption: string;
-  registered: { name: string; email: string }[];
-  useremail: string;
+  participants: { name: string | null; email: string }[];
+  teamSize: number;
+  useremail: string | null | undefined;
+  programSlug: string | string[] | undefined;
+  userExist: boolean;
 }) {
   const register = async () => {
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch(`/api/form/${programSlug}/register`, {
         method: "POST",
         body: JSON.stringify({
           eventId,
@@ -50,38 +58,36 @@ export default function EventRegisterCard({
         },
       });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
+      // if (!response.ok) {
+      //   throw new Error("Network response was not ok");
+      // }
       const data = await response.json();
       console.log("Registration successful:", data);
+      toast.success("registration success");
     } catch (error) {
+      toast.error("Failed to register");
       console.error("There was a problem with the registration:", error);
     }
   };
   const unregister = async () => {
     try {
-      const response = await fetch("/api/unregister", {
+      const response = await fetch(`/api/form/${programSlug}/revoke`, {
         method: "POST",
         body: JSON.stringify({
           eventId,
           teamId,
-          email: useremail,
         }),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
       const data = await response.json();
-      console.log("Unregistration successful:", data);
+      console.log("Unregisterd successful:", data);
+      toast.success("Unregistraion success");
     } catch (error) {
-      console.error("There was a problem with the unregistration:", error);
+      toast.error("Failed to unregistraion");
+      console.error("There was a problem with the unregistraion:", error);
     }
   };
   return (
@@ -95,9 +101,7 @@ export default function EventRegisterCard({
           <div>
             <Badge variant="secondary" className="flex items-center gap-1">
               <Users className="w-3 h-3" />
-              {registered.length > 1
-                ? `${registered.length} People`
-                : `${registered.length} Person`}
+              {teamSize > 1 ? `${teamSize} People` : `${teamSize} Person`}
             </Badge>
           </div>
         </div>
@@ -113,8 +117,12 @@ export default function EventRegisterCard({
             </HoverCardTrigger>
 
             <HoverCardContent className="w-56">
-              {registered.map((user, idx) => (
-                <People key={idx} name={user.name} email={user.email} />
+              {participants.map((user, idx) => (
+                <People
+                  key={idx}
+                  name={user.name || "default"}
+                  email={user.email}
+                />
               ))}
             </HoverCardContent>
           </HoverCard>
@@ -123,7 +131,7 @@ export default function EventRegisterCard({
             <DialogTrigger asChild>
               <Button variant="outline">
                 <User className="w-4 h-4" />
-                Register
+                {userExist ? "Unregister" : "Register"}
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -141,12 +149,21 @@ export default function EventRegisterCard({
                     </span>
                   </div>
                 </div>
-                <Button
-                  className="w-full"
-                  onClick={async () => await register()}
-                >
-                  Confirm Registration
-                </Button>
+                {userExist ? (
+                  <Button
+                    className="w-full"
+                    onClick={async () => await unregister()}
+                  >
+                    Cofirm Unregistration
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full"
+                    onClick={async () => await register()}
+                  >
+                    Confirm Registration
+                  </Button>
+                )}
               </div>
             </DialogContent>
           </Dialog>

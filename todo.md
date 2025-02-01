@@ -1,2 +1,1 @@
 - [ ] if the user is already logged in dont let them log in again (creates a ununusual bug)
-- [ ]
