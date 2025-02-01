@@ -3,7 +3,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import Google from "next-auth/providers/google";
 import Passkey from "next-auth/providers/passkey";
-import { AuthError } from "./lib/enum";
 
 const prisma = new PrismaClient();
 

@@ -1,20 +1,11 @@
 "use client";
-import { signIn } from "next-auth/webauthn";
 import { googleLogin } from "../../action";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, KeyRound } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default function Page() {
-  async function passKeyLogin() {
-    try {
-      await signIn("passkey", {});
-    } catch (err) {
-      console.log("passkey error:", err);
-    }
-  }
-
-  async function handleGoogleLogin() {
+  async function handleGoogleSignup() {
     try {
       await googleLogin();
     } catch (err) {
@@ -26,34 +17,16 @@ export default function Page() {
     <div className="flex justify-center items-center h-[calc(100vh-200px)] bg-bgPrimary">
       <div className="flex flex-col items-center gap-8 bg-card p-10 rounded-xl shadow-xl w-full max-w-md mx-4">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-semibold text-primary">Welcome Back</h1>
+          <h1 className="text-4xl font-semibold text-primary">
+            Create Account
+          </h1>
           <p className="text-muted-foreground">
-            Choose your preferred sign in method
+            Sign up to get started with our service
           </p>
         </div>
-
         <div className="w-full flex flex-col gap-4">
           <Button
-            onClick={passKeyLogin}
-            className="w-full py-6 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground group relative overflow-hidden transition-all duration-300"
-          >
-            <div className="flex items-center justify-center gap-3">
-              <KeyRound className="w-5 h-5" />
-              <span className="text-lg font-medium">Sign in with Passkey</span>
-            </div>
-            <ChevronRight className="absolute right-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
-          </Button>
-
-          <div className="relative my-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">or</span>
-            </div>
-          </div>
-          <Button
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignup}
             variant="outline"
             className="w-full py-6 rounded-lg border-2 hover:bg-secondary/5 text-foreground group relative overflow-hidden transition-all duration-300"
           >
@@ -76,18 +49,18 @@ export default function Page() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              <span className="text-lg font-medium">Continue with Google</span>
+              <span className="text-lg font-medium">Sign up with Google</span>
             </div>
             <ChevronRight className="absolute right-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
           </Button>
           <div className="text-center mt-4">
             <p className="text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href="/auth/signup"
+                href="/signin"
                 className="text-primary hover:underline font-medium"
               >
-                Sign up
+                Sign in
               </Link>
             </p>
           </div>
