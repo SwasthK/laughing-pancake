@@ -9,7 +9,7 @@ import {
   CreateFormDateAndTimeBlock,
   CreateFormEventBlock,
   CreateFormVenueBlock,
-} from "./blocks/form-components"
+} from "./blocks/form-components";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,15 +27,24 @@ export default function CreateEventForm() {
     defaultValues: defaultValues,
   });
 
-  function onSubmit(formdata: z.infer<typeof createEventFormSchema>) {
-    console.log("Data",formdata)
+  async function onSubmit(formdata: z.infer<typeof createEventFormSchema>) {
+    console.log("Data", formdata);
     const data = normalizedData(formdata);
     if (!data) return;
-    
+
     setLoading(true);
 
     // Actual API Call goes here
     try {
+      const res = await fetch("/api/poster/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const resData = await res.json();
+      console.log(resData);
       const promise = () =>
         new Promise((resolve) =>
           setTimeout(
@@ -53,7 +62,6 @@ export default function CreateEventForm() {
             800
           )
         );
-
       toast.promise(promise(), {
         loading: "Loading...",
         success: (data: any) => {

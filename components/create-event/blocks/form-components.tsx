@@ -494,7 +494,6 @@ export const CreateFormContactBlock = ({ form }: { form: any }) => {
 };
 
 export const CreateEventFormPreferencesBlock = ({ form }: { form: any }) => {
-
   const handleSelect = (value: string) => {
     form.setValue("formType", value);
     form.trigger("formType");
@@ -544,7 +543,7 @@ export const CreateEventFormPreferencesBlock = ({ form }: { form: any }) => {
         {form.getValues("formType") === FormType.EXTERNAL && (
           <Input
             type="text"
-            defaultValue={form.getValues("link")} 
+            defaultValue={form.getValues("link")}
             placeholder="Add a registration link"
             className="max-w-sm"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -645,8 +644,8 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
   };
 
   let headsData = [
-    { roll: 220982, name: "Alice" },
-    { roll: 220983, name: "Bob" },
+    { roll: 220931, name: "Shainil" },
+    { roll: 220981, name: "Swasthik" },
     { roll: 220984, name: "Carol" },
     { roll: 220985, name: "Dave" },
     { roll: 220986, name: "Eve" },

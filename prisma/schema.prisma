@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,11 +15,14 @@ model User {
   image         String?
   accounts      Account[]
   Authenticator Authenticator[]
-  Event         Event[]
-  event_id      String?
+  Program       Program[]
+  EventHead     EventHead[]
+  Participant   Participant[]
+
+  Team Team[] @relation("TeamLeader")
 }
 
-//default for auth
+//-----------auth------------------------
 model Account {
   userId            String
   type              String
@@ -58,53 +55,92 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Program {
+  programId   String @id @default(cuid())
+  programSlug String @unique
+
+  //arhived status needed
+  creadtedByUserID String
+
+  Poster  Poster?
+  Event   Event[]
+  Creator User    @relation(fields: [creadtedByUserID], references: [id], onDelete: Cascade)
+  Team    Team[]
+
+  @@index([programSlug])
+}
+
+model Poster {
+  posterId    String   @id @default(cuid())
+  title       String
+  image       String
+  description String //its a json but we are stringifying it
+  date        DateTime
+  time        DateTime
+  endDate     DateTime
+  venue       String
+  contact     String
+  brochure    String
+  eventType   String //should be enum
+  organizedBy String //should be enum
+  link        String? //gogle form link 
+  programId   String   @unique
+
+  Program Program @relation(fields: [programId], references: [programId], onDelete: Cascade)
+}
+
+model EventHead {
+  headId  String @id @default(cuid())
+  userId  String
+  eventId String
+
+  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+}
+
 model Event {
-  event_id          String   @id @default(cuid())
-  event_title       String
-  event_description String?
-  conver_image      String?
-  event_time        DateTime
-  event_date        DateTime
-  event_location    String
-  event_reg_link    String
-  contact           String
-  user_id           String
-  course_id         String
+  eventId      String @id @default(cuid())
+  programId    String
+  name         String
+  caption      String
+  participants Int
 
-  department_id String?
-  user          User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  course        Course      @relation(fields: [course_id], references: [course_id])
-  Department    Department? @relation(fields: [department_id], references: [department_id])
+  EventHead   EventHead[]
+  Participant Participant[]
+  Program     Program       @relation(fields: [programId], references: [programId], onDelete: Cascade)
 }
 
-enum CourseName {
-  Ba
-  BCom
-  BSc
-  BCA
-  BBA
-  BVoc
+model Team {
+  teamId           String     @id @default(cuid())
+  teamName         String
+  programId        String
+  teamLeaderId     String
+  teamStatus       TeamStatus
+  registrationDate DateTime   @default(now()) //only when team if fully registered (each event have required number dont need to have join every event)
+
+  TeamLeader  User          @relation("TeamLeader", fields: [teamLeaderId], references: [id], onDelete: Cascade)
+  Program     Program       @relation(fields: [programId], references: [programId], onDelete: Cascade)
+  Participant Participant[]
 }
 
-enum DepartmentName {
-  Psychology
-  Physics
-  Chemistry
-  Mathematics
-  ComputerScience
+model Participant {
+  participantId String   @id @default(cuid())
+  userId        String
+  eventId       String
+  teamId        String
+  registeredAt  DateTime @default(now())
+
+  Team  Team  @relation(fields: [teamId], references: [teamId], onDelete: Cascade)
+  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
 }
 
-model Course {
-  course_id   String       @id @default(cuid())
-  course_name CourseName
-  department  Department[]
-  event       Event[]
-}
-
-model Department {
-  department_id   String         @id @default(cuid())
-  department_name DepartmentName
-  course_id       String?
-  event           Event[]
-  Course          Course?        @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
+//TODO:
+//1. Team status
+//2. Event status
+enum TeamStatus {
+  PENDING
+  REGISTERED
+  VERIFIED
+  DISQUALIFIED
 }
