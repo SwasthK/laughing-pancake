@@ -28,8 +28,8 @@ export type HotEventsData = {
   visitLink: string;
 };
 
-export interface eventsDataType extends HotEventsData {
-  registerLink: string;
+export interface EventsDataType extends HotEventsData {
+    registerLink: string;
 }
 
 export enum FormType {
@@ -78,6 +78,35 @@ export enum HttpStatusCode {
   BadGateway = 502,
   ServiceUnavailable = 503,
   GatewayTimeout = 504,
+}
+
+export namespace PosterType {
+    export type Title = string;
+
+    export type EventImage = {
+        title: string;
+        imageUrl: string;
+    };
+
+    export type Description = JSONContent;
+
+    export type EventType = string;
+
+    export type EventMetadata = {
+        date: string;
+        time: string;
+        location: string;
+    };
+
+    export type MetadataItem = {
+        icon: React.ReactNode;
+        text: string;
+    };
+
+    export type EndDate = string;
+
+    export type Phone = string;
+
 }
 
 export type NormalizedFormData = {

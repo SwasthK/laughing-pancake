@@ -4,6 +4,7 @@ import { generateHTML } from "@tiptap/html";
 import { JSONContent } from "novel";
 import { useMemo } from "react";
 import { defaultExtensions } from "./extensions";
+import { cn } from "@/lib/utils";
 
 export const sampleData = {
   type: "doc",
@@ -376,7 +377,13 @@ export const sampleData = {
   ],
 };
 
-export const EditorPreview = ({ jsonData }: { jsonData: JSONContent }) => {
+export const EditorPreview = ({
+  jsonData,
+  className,
+}: {
+  jsonData: JSONContent;
+  className?: string;
+}) => {
   const htmlData = useMemo(() => {
     return generateHTML(jsonData, defaultExtensions);
   }, [jsonData]);
@@ -384,7 +391,7 @@ export const EditorPreview = ({ jsonData }: { jsonData: JSONContent }) => {
   return (
     <>
       <div
-        className="prose-lg"
+        className={cn("prose-lg", className)}
         dangerouslySetInnerHTML={{ __html: htmlData }}
       ></div>
     </>
