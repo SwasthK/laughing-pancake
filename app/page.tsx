@@ -3,7 +3,7 @@ import { FilterBar } from "@/components/fiterbar";
 import { eventsData, hoteventsData } from "../lib/data";
 import { Fragment } from "react";
 import { Carousel } from "@/components/hot-events";
-import { eventsDataType } from "@/types";
+import { EventsDataType } from "@/types";
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-6">
-        {eventsData.map((event: eventsDataType) => (
+        {eventsData.map((event: EventsDataType) => (
           <Fragment key={event.eventName}>
             <EventCard {...event} />
           </Fragment>

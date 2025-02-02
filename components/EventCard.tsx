@@ -1,7 +1,7 @@
 import { IconExternalLink } from "@tabler/icons-react";
 import { Tooltip } from "./Tooltip";
 import { Link } from "./Link";
-import { eventsDataType } from "@/types";
+import { EventsDataType } from "@/types";
 import Image from "next/image";
 
 export function EventCard({
@@ -11,7 +11,7 @@ export function EventCard({
   imgUrl,
   visitLink,
   registerLink,
-}: eventsDataType) {
+}: EventsDataType) {
   return (
     <div draggable className="flex flex-col  max-w-full">
       <div className="h-40 w-full relative rounded-lg rounded-b-none overflow-hidden">

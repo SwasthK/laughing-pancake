@@ -1,4 +1,4 @@
-import { eventsDataType, HotEventsData } from "@/types";
+import { EventsDataType, HotEventsData } from "@/types";
 
 export const hoteventsData: HotEventsData[] = [
     {
@@ -24,7 +24,7 @@ export const hoteventsData: HotEventsData[] = [
     }
 ];
 
-export const eventsData: eventsDataType[] = [
+export const eventsData: EventsDataType[] = [
     {
         eventName: "TechFest 2025",
         description: "A showcase of cutting-edge technology and innovative solutions.",
@@ -74,3 +74,134 @@ export const eventsData: eventsDataType[] = [
         registerLink: "https://example.com/register-literary-fest"
     }
 ];
+
+export const posterData: any = {
+    poster: {
+        title: "Tech fest 2025",
+        picture: {
+            url: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        },
+        description: {
+            type: "doc",
+            content: [
+                {
+                    type: "heading",
+                    attrs: {
+                        level: 3
+                    },
+                    content: [
+                        {
+                            type: "text",
+                            marks: [
+                                {
+                                    type: "bold"
+                                }
+                            ],
+                            text: "Key Highlights:"
+                        }
+                    ]
+                },
+                {
+                    type: "paragraph",
+                    content: [
+                        {
+                            type: "text",
+                            text: "1️⃣ "
+                        },
+                        {
+                            type: "text",
+                            marks: [
+                                {
+                                    type: "bold"
+                                }
+                            ],
+                            text: "Hackathon:"
+                        },
+                        {
+                            type: "text",
+                            text: " 24-hour coding marathon 💻"
+                        },
+                        {
+                            type: "hardBreak"
+                        },
+                        {
+                            type: "text",
+                            text: "2️⃣ "
+                        },
+                        {
+                            type: "text",
+                            marks: [
+                                {
+                                    type: "bold"
+                                }
+                            ],
+                            text: "AI & Robotics Expo:"
+                        },
+                        {
+                            type: "text",
+                            text: " Showcasing futuristic tech 🤖"
+                        },
+                        {
+                            type: "hardBreak"
+                        },
+                        {
+                            type: "text",
+                            text: "3️⃣ "
+                        },
+                        {
+                            type: "text",
+                            marks: [
+                                {
+                                    type: "bold"
+                                }
+                            ],
+                            text: "Tech Talks:"
+                        },
+                        {
+                            type: "text",
+                            text: " Sessions by industry leaders 🎤"
+                        },
+                        {
+                            type: "hardBreak"
+                        },
+                        {
+                            type: "text",
+                            text: "4️⃣ "
+                        },
+                        {
+                            type: "text",
+                            marks: [
+                                {
+                                    type: "bold"
+                                }
+                            ],
+                            text: "Gaming Tournament:"
+                        },
+                        {
+                            type: "text",
+                            text: " Compete in eSports 🎮"
+                        }
+                    ]
+                }
+            ]
+        },
+        time: {
+            hour: 11,
+            minute: 30
+        },
+        date: "2025-02-04",
+        venue: "Auditorium",
+        registration: {
+            individual: false,
+            end: "2025-02-04"
+        },
+        phone: "9892883738",
+        organizedBy: "bba",
+        eventType: "hackathon",
+        brochure: "http://localhost:3000/events/create"
+    },
+    events: [],
+    link: "",
+    formType: "NONE"
+};
+

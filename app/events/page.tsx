@@ -7,7 +7,7 @@ import {
 } from "@tabler/icons-react";
 import { eventsData } from "../../lib/data";
 import { Fragment } from "react";
-import { eventsDataType } from "@/types";
+import { EventsDataType } from "@/types";
 
 export default function Events() {
   return (
@@ -100,7 +100,7 @@ export default function Events() {
   );
 }
 
-function EventCard({ eventName, description, visitLink }: eventsDataType) {
+function EventCard({ eventName, description, visitLink }: EventsDataType) {
   return (
     <div className="flex gap-1 sm:max-w-[35rem] flex-col bg-[#4f4848] text-white px-6 py-3  rounded-md">
       <p className="text-lg font-semibold tracking-tighter">{eventName}</p>

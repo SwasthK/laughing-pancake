@@ -26,7 +26,7 @@ export type HotEventsData = {
     visitLink: string;
 }
 
-export interface eventsDataType extends HotEventsData {
+export interface EventsDataType extends HotEventsData {
     registerLink: string;
 }
 
@@ -52,4 +52,33 @@ export enum EventType {
     HACKATHON = "hackathon",
     CONFERENCE = "conference",
     MEETUP = "meetup",
+}
+
+export namespace PosterType {
+    export type Title = string;
+
+    export type EventImage = {
+        title: string;
+        imageUrl: string;
+    };
+
+    export type Description = JSONContent;
+
+    export type EventType = string;
+
+    export type EventMetadata = {
+        date: string;
+        time: string;
+        location: string;
+    };
+
+    export type MetadataItem = {
+        icon: React.ReactNode;
+        text: string;
+    };
+
+    export type EndDate = string;
+
+    export type Phone = string;
+
 }
