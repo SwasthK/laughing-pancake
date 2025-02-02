@@ -1,0 +1,1 @@
+- [ ] not more then one event can be added to the poster creation form

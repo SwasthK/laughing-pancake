@@ -3,6 +3,7 @@
 
 #for now
 auth.config.ts
+*.ignore*
 # dependencies
 /node_modules
 /.pnp

@@ -72,7 +72,7 @@ export default function Page() {
             <p className="text-muted-foreground">
               want to Signin?{" "}
               <Link
-                href="/auth/signin"
+                href="/signin"
                 className="text-primary hover:underline font-medium transition-colors"
               >
                 Sign in

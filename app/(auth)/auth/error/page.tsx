@@ -36,7 +36,7 @@ export default function Page() {
           </Link>
           <Link
             className="px-6 py-3 rounded-lg bg-secondary hover:text-secondary  hover:bg-secondary-foreground  text-secondary-foreground text-lg font-semibold shadow-lg transform transition duration-300"
-            href="/auth/signin"
+            href="/signin"
           >
             Login
           </Link>
