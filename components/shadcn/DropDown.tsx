@@ -50,7 +50,7 @@ export function DropdownMenu() {
             <Plus />
             <span>Create event</span>
           </DropdownMenuItem>
-          <DropdownMenuItem to="/">
+          <DropdownMenuItem to="/events">
             <CalendarDays />
             <span>My events</span>
           </DropdownMenuItem>

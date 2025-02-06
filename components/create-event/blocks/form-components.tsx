@@ -979,7 +979,7 @@ const EditEventheads = ({
 }) => {
   useEffect(() => {
     setHead(defaultValue || []);
-  }, []);
+  });
   return (
     <Popover>
       <PopoverTrigger asChild>

@@ -8,14 +8,15 @@ import { RegistrationInfo } from "@/components/poster/event-reg-info";
 import { EventTypeTag } from "@/components/poster/event-type-tag";
 import { Poster } from "@/types";
 import { JSONContent } from "novel";
-import { useEffect, useState } from "react";
+import { Usable, use, useEffect, useState } from "react";
 // const { poster } = posterData;
 
 export default function EventPoster({
   params,
 }: {
-  params: { programSlug: string };
+  params: Usable<{ programSlug: string }>;
 }) {
+  const { programSlug } = use(params);
   //default values
   const [poster, setPoster] = useState<Poster>({
     title: "",
@@ -56,11 +57,11 @@ export default function EventPoster({
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     (async () => {
-      const p = await params;
       try {
         setLoading(true);
-        const res = await fetch(`/api/poster/${p.programSlug}`);
+        const res = await fetch(`/api/poster/${programSlug}`);
         const data = await res.json();
+        console.log("Data ", data);
         setPoster({ ...data.data });
       } catch (error) {
         console.error(error);
@@ -68,7 +69,7 @@ export default function EventPoster({
         setLoading(false);
       }
     })();
-  }, [params]);
+  }, [programSlug]);
   if (loading) return <div>Loading</div>;
   return (
     <>
@@ -102,7 +103,7 @@ export default function EventPoster({
               <RegistrationInfo
                 closingDate={poster.endDate}
                 link={poster.link}
-                programSlug={params.programSlug}
+                programSlug={programSlug}
               />
             )}
           </div>

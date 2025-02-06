@@ -129,3 +129,33 @@ export const createEventFormSchema = z.object({
     .default(FormType.NONE),
   link: z.string({ message: "Invalid registration link" }),
 });
+
+export const zodEventIdSchema = z.string({
+  message: "Invalid Event Id",
+  required_error: "Event Id is required",
+  invalid_type_error: "Invalid Event Id"
+}).cuid({ message: "Invalid Event Id" }).nonempty({ message: "Invalid Event Id" })
+
+export const zodTeamIdSchema = z.string({
+  message: "Invalid Team Id",
+  required_error: "Team Id is required",
+  invalid_type_error: "Invalid Team Id"
+}).cuid({ message: "Invalid Team Id" }).nonempty({ message: "Invalid Team Id" })
+
+export const zodEventIdAndTeamIdSchema = z.union([zodEventIdSchema, zodTeamIdSchema], {
+  invalid_type_error: "Invalid Event Id or Team Id",
+  required_error: "Event Id or Team Id is required",
+  message: "Invalid Event Id or Team Id"
+})
+
+export const zodEmailSchema = z.string({
+  required_error: "Email Id is required",
+  invalid_type_error: "Invalid Email Id",
+  message: "Invalid Email Id"
+}).email({
+  message: "Invalid Email Id"
+}).refine((val: string) => {
+  return ["@sdmcujire.in"].some((domain: string) => val.endsWith(domain))
+}, {
+  message: "Email domain is not allowed"
+})

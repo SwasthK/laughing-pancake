@@ -45,7 +45,7 @@ export function ComboBox({
     if (field) {
       field.onChange(value);
     }
-  }, [value]);
+  }, [value, field]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

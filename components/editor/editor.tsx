@@ -37,15 +37,11 @@ export const Editor: React.FC<{
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openAI] = useState(false);
-  const [saveStatus, setSaveStatus] = useState("Saved");
 
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
-
       setEditorContent?.(json);
-
-      setSaveStatus("Saved");
     },
     500
   );
@@ -70,7 +66,6 @@ export const Editor: React.FC<{
           }}
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
-            setSaveStatus("typing...");
           }}
         >
           <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-1 shadow-md transition-all">

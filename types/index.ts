@@ -121,6 +121,7 @@ export type NormalizedFormData = {
     venue: string;
     phone: string;
     registration: {
+      individual: boolean;
       end: string;
     };
     eventType: string;

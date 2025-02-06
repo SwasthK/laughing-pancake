@@ -101,17 +101,22 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
 
   if (!editor) return null;
   const activeColorItem = TEXT_COLORS.find(({ color }) =>
-    editor.isActive("textStyle", { color }),
+    editor.isActive("textStyle", { color })
   );
 
   const activeHighlightItem = HIGHLIGHT_COLORS.find(({ color }) =>
-    editor.isActive("highlight", { color }),
+    editor.isActive("highlight", { color })
   );
 
   return (
     <Popover modal={true} open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button size="sm" className="gap-2 rounded-none" variant="ghost" type="button">
+        <Button
+          size="sm"
+          className="gap-2 rounded-none"
+          variant="ghost"
+          type="button"
+        >
           <span
             className="rounded-sm px-1"
             style={{
@@ -139,12 +144,13 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
               key={index}
               onSelect={() => {
                 editor.commands.unsetColor();
-                name !== "Default" &&
+                if (name !== "Default") {
                   editor
                     .chain()
                     .focus()
                     .setColor(color || "")
                     .run();
+                }
                 onOpenChange(false);
               }}
               className="flex cursor-pointer items-center justify-between px-3 py-2 text-sm hover:bg-accent hover:bg-[#DADADA] transition-colors duration-200 ease-in"
@@ -170,7 +176,9 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
               key={index}
               onSelect={() => {
                 editor.commands.unsetHighlight();
-                name !== "Default" && editor.chain().focus().setHighlight({ color }).run();
+                if (name !== "Default") {
+                  editor.chain().focus().setHighlight({ color }).run();
+                }
                 onOpenChange(false);
               }}
               className="flex cursor-pointer items-center justify-between px-3 py-2 text-sm hover:bg-accent hover:bg-[#DADADA] transition-colors duration-200 ease-in"
