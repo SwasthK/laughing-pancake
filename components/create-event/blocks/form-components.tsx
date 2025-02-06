@@ -12,7 +12,7 @@ import {
 import { Editor } from "../../editor/editor";
 import { ComboBox } from "../../shadcn/Combobox";
 import { FormHeaderProps, FormLabelProps, FormType } from "@/types";
-import React, { use, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
   Popover,
   PopoverContent,
@@ -374,7 +374,7 @@ export const CreateFormVenueBlock = ({ form }: { form: any }) => {
           <FormField
             control={form.control}
             name="registration"
-            render={({ field }) => (
+            render={() => (
               <div className="flex flex-col w-full gap-2.5">
                 <Label
                   error={
@@ -658,7 +658,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
   //   fetchHeads();
   // }, []);
 
-  let headsData = [
+  const headsData = [
     { roll: 220931, name: "Shainil" },
     { roll: 220981, name: "Swasthik" },
     { roll: 220982, name: "Carol" },
@@ -696,6 +696,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
         setLoad(false);
       }, 500);
     } catch (error) {
+      console.error(error);
       setFilteredHeads([]);
       toast.error("Failed to fetch data");
       setLoad(false);
@@ -736,8 +737,8 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
             />
             {head.length > 0 && (
               <div className="w-full px-2 text-sm flex flex-wrap gap-4">
-                {head.map((key: { roll: string; name: string }) => (
-                  <p className="bg-[#E6E4E4] px-2 py-1 rounded-md">
+                {head.map((key: { roll: string; name: string }, i: number) => (
+                  <p key={i} className="bg-[#E6E4E4] px-2 py-1 rounded-md">
                     {key.roll} - {key.name}
                   </p>
                 ))}
@@ -777,7 +778,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
         {form.getValues("events").length > 0 ? (
           <ScrollArea className="h-[30rem] w-full rounded-md border p-8">
             {form.getValues("events").map((event: any, index: number) => (
-              <div className="px-1 py-3">
+              <div key={index} className="px-1 py-3">
                 <div className="bg-[#DADADA] border cursor-pointer rounded-md p-4 flex flex-col relative">
                   <h3 className="font-mono font-semibold text-xl">
                     #{index + 1} {event.name}
@@ -818,7 +819,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
                             <DialogTitle>Edit {event.name}</DialogTitle>
                             <DialogDescription>
                               Make changes to your event here. Click save when
-                              you're done.
+                              you&apos;re done.
                             </DialogDescription>
                           </DialogHeader>
                           <div className="grid gap-4 py-4">

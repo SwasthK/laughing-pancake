@@ -1,23 +1,13 @@
 import {
   CalendarDays,
-  Cloud,
-  CreditCard,
   Github,
-  Keyboard,
   LifeBuoy,
   LogOut,
-  Mail,
-  MessageSquare,
   Plus,
-  PlusCircle,
   Settings,
   TrophyIcon,
   User,
-  UserPlus,
-  Users,
 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 
 import {
   DropdownMenu as DropdownMenuContainer,
@@ -25,12 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem as DropdownItemWrapper,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -82,7 +67,10 @@ export function DropdownMenu() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem to="https://github.com/SwasthK/laughing-pancake" target="_blank">
+        <DropdownMenuItem
+          to="https://github.com/SwasthK/laughing-pancake"
+          target="_blank"
+        >
           <Github />
           <span>GitHub</span>
         </DropdownMenuItem>

@@ -126,9 +126,9 @@ export async function POST(request: Request) {
         status: HttpStatusCode.Created,
       }
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      console.log("DBError stack:", error.stack);
+      console.error("DBError stack:", error.stack);
 
       if (
         error.code == "P2002" &&
@@ -157,8 +157,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (error instanceof Error) console.log("Error:", error.stack);
-    else console.log("Error: Unexpected error occurred");
+    if (error instanceof Error) console.error("Error:", error.stack);
+    else console.error("Error: Unexpected error occurred");
 
     return Response.json(
       {

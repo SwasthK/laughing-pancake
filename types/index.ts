@@ -29,7 +29,7 @@ export type HotEventsData = {
 };
 
 export interface EventsDataType extends HotEventsData {
-    registerLink: string;
+  registerLink: string;
 }
 
 export enum FormType {
@@ -81,32 +81,31 @@ export enum HttpStatusCode {
 }
 
 export namespace PosterType {
-    export type Title = string;
+  export type Title = string;
 
-    export type EventImage = {
-        title: string;
-        imageUrl: string;
-    };
+  export type EventImage = {
+    title: string;
+    imageUrl: string;
+  };
 
-    export type Description = JSONContent;
+  export type Description = JSONContent;
 
-    export type EventType = string;
+  export type EventType = string;
 
-    export type EventMetadata = {
-        date: string;
-        time: string;
-        location: string;
-    };
+  export type EventMetadata = {
+    date: string;
+    time: string;
+    location: string;
+  };
 
-    export type MetadataItem = {
-        icon: React.ReactNode;
-        text: string;
-    };
+  export type MetadataItem = {
+    icon: React.ReactNode;
+    text: string;
+  };
 
-    export type EndDate = string;
+  export type EndDate = string;
 
-    export type Phone = string;
-
+  export type Phone = string;
 }
 
 export type NormalizedFormData = {
@@ -149,4 +148,19 @@ export type FormattedEvent = {
     name: string | null;
     email: string;
   }[];
+};
+
+export type Poster = {
+  title: string;
+  image: string;
+  eventType: string;
+  organizedBy: string;
+  date: string;
+  time: string;
+  venue: string;
+  brochure: string;
+  description: string;
+  contact: string;
+  endDate: string;
+  link: string | null;
 };

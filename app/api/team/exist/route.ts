@@ -1,9 +1,4 @@
 import { auth } from "@/auth";
-import {
-  generateTeamKey,
-  getIdByEmail,
-  getProgramIdBySlug,
-} from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { HttpStatusCode } from "@/types";
 import { Prisma } from "@prisma/client";
@@ -25,65 +20,47 @@ export async function POST(request: Request) {
       }
     );
   }
-  const userId = await getIdByEmail(session?.user?.email as string);
 
   const requestBodySchema = z.object({
-    programSlug: z.string(),
-    teamName: z.string().nullable(),
+    teamKey: z.string(),
   });
 
-  const reqBody: { programSlug: string; teamName: string | null } =
-    await request.json();
+  const reqBody: { teamKey: string } = await request.json();
   const { data: body, success } = requestBodySchema.safeParse(reqBody);
 
   if (!success) {
     return Response.json(
       {
         success: false,
-        error: "Invalid request body or missing program slug",
+        error: "missing teamkey",
       },
       {
         status: HttpStatusCode.BadRequest,
       }
     );
   }
-  const programId = await getProgramIdBySlug(body.programSlug);
-  if (!programId) {
-    return Response.json(
-      {
-        success: false,
-        error: "Program not found",
-      },
-      {
-        status: HttpStatusCode.NotFound,
-      }
-    );
-  }
 
   try {
-    const team = await prisma.team.create({
-      data: {
-        teamKey: generateTeamKey(body.programSlug),
-        teamName: body.teamName,
-        programId: programId,
-        teamLeaderId: userId,
+    const team = await prisma.team.findFirst({
+      where: {
+        teamKey: body.teamKey,
       },
     });
     if (!team) {
       return Response.json(
         {
           success: false,
-          error: "Team not created",
+          error: "Team not found",
         },
         {
-          status: HttpStatusCode.InternalServerError,
+          status: HttpStatusCode.NotFound,
         }
       );
     }
     return Response.json(
       {
         success: true,
-        message: "Team created successfully",
+        message: "Team found",
         data: team.teamKey,
       },
       {
@@ -95,7 +72,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          error: "Team not created",
+          error: "Team not found",
           details: error.message,
         },
         {

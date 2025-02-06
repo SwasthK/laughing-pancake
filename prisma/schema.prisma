@@ -115,11 +115,13 @@ model Event {
 }
 
 model Team {
-  teamId           String     @id @default(cuid())
-  teamName         String? //remove this 
+  teamId   String  @id @default(cuid())
+  teamName String? //remove this  
+  teamKey  String  @unique
+
   programId        String
   teamLeaderId     String
-  teamStatus       TeamStatus
+  teamStatus       TeamStatus @default(PENDING)
   registrationDate DateTime   @default(now()) //only when team if fully registered (each event have required number dont need to have join every event)
 
   TeamLeader  User          @relation("TeamLeader", fields: [teamLeaderId], references: [id], onDelete: Cascade)
@@ -127,6 +129,7 @@ model Team {
   Participant Participant[]
 
   @@unique([programId, teamLeaderId])
+  @@index([teamKey])
 }
 
 model Participant {

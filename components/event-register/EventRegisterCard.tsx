@@ -22,11 +22,10 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Badge } from "../ui/badge";
-import { Underdog } from "next/font/google";
 import { toast } from "sonner";
 export default function EventRegisterCard({
   eventId,
-  teamId,
+  teamKey,
   title,
   caption,
   participants,
@@ -36,7 +35,7 @@ export default function EventRegisterCard({
   userExist,
 }: {
   eventId: string;
-  teamId: string;
+  teamKey: string;
   title: string;
   caption: string;
   participants: { name: string | null; email: string }[];
@@ -51,7 +50,7 @@ export default function EventRegisterCard({
         method: "POST",
         body: JSON.stringify({
           eventId,
-          teamId,
+          teamKey,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +74,7 @@ export default function EventRegisterCard({
         method: "POST",
         body: JSON.stringify({
           eventId,
-          teamId,
+          teamKey,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +100,9 @@ export default function EventRegisterCard({
           <div>
             <Badge variant="secondary" className="flex items-center gap-1">
               <Users className="w-3 h-3" />
-              {teamSize > 1 ? `${teamSize} People` : `${teamSize} Person`}
+              {teamSize > 1
+                ? `${participants.length}/${teamSize} People`
+                : `${participants.length}/${teamSize} Person`}
             </Badge>
           </div>
         </div>

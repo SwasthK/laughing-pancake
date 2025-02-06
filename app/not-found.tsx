@@ -1,6 +1,6 @@
 import { Link } from "@/components/Link";
 
-export default function () {
+export default function Custom404() {
   return (
     <div className="py-16">
       <div className="min-h-[calc(100vh-250px)] gap-2 flex flex-col justify-center items-center">

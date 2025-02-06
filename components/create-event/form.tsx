@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { createEventFormSchema } from "@/zod";
-import { Loader, SearchCheck } from "lucide-react";
+import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { defaultValues, normalizedData, onError } from "./form-methods";
 

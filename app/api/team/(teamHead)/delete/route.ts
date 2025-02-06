@@ -1,14 +1,11 @@
 import { auth } from "@/auth";
-import {
-  generateTeamKey,
-  getIdByEmail,
-  getProgramIdBySlug,
-} from "@/lib/api-helper";
+import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { HttpStatusCode } from "@/types";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
+//body: teamKey
 export async function POST(request: Request) {
   //user ID
   const session = await auth();
@@ -28,63 +25,40 @@ export async function POST(request: Request) {
   const userId = await getIdByEmail(session?.user?.email as string);
 
   const requestBodySchema = z.object({
-    programSlug: z.string(),
-    teamName: z.string().nullable(),
+    teamKey: z.string(),
   });
 
-  const reqBody: { programSlug: string; teamName: string | null } =
-    await request.json();
+  const reqBody: { programSlug: string } = await request.json();
   const { data: body, success } = requestBodySchema.safeParse(reqBody);
 
   if (!success) {
     return Response.json(
       {
         success: false,
-        error: "Invalid request body or missing program slug",
+        error: "Invalid request body or missing team Key",
       },
       {
         status: HttpStatusCode.BadRequest,
       }
     );
   }
-  const programId = await getProgramIdBySlug(body.programSlug);
-  if (!programId) {
-    return Response.json(
-      {
-        success: false,
-        error: "Program not found",
-      },
-      {
-        status: HttpStatusCode.NotFound,
-      }
-    );
-  }
 
   try {
-    const team = await prisma.team.create({
-      data: {
-        teamKey: generateTeamKey(body.programSlug),
-        teamName: body.teamName,
-        programId: programId,
+    const team = await prisma.team.delete({
+      where: {
+        teamKey: body.teamKey,
         teamLeaderId: userId,
       },
+      select: {
+        teamId: true,
+      },
     });
-    if (!team) {
-      return Response.json(
-        {
-          success: false,
-          error: "Team not created",
-        },
-        {
-          status: HttpStatusCode.InternalServerError,
-        }
-      );
-    }
+
     return Response.json(
       {
         success: true,
-        message: "Team created successfully",
-        data: team.teamKey,
+        message: "Team deleted",
+        data: team.teamId,
       },
       {
         status: HttpStatusCode.OK,
@@ -95,7 +69,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          error: "Team not created",
+          error: "Team not deleted",
           details: error.message,
         },
         {
