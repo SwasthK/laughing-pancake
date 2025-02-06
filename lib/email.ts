@@ -41,7 +41,7 @@ export async function createEmailList(
     });
     return data;
   } catch (err) {
-    console.log("API Error:", err);
+    console.error("API Error:", err);
     return null;
   }
 }
@@ -58,7 +58,7 @@ export async function setEmailVerified(email: string) {
     });
     return data;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return null;
   }
 }
@@ -114,7 +114,7 @@ export async function verifyEmail(email: string, token: string) {
     });
     return true;
   } catch (err) {
-    console.log("API Error:", err);
+    console.error("API Error:", err);
     return false;
   }
 }

@@ -15,7 +15,7 @@ export default function Page() {
         action: "register",
       });
     } catch (err) {
-      console.log("passkey register error:", err);
+      console.error("passkey register error:", err);
     }
   }
 

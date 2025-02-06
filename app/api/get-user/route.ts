@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prismaCleint";
 import { HttpStatusCode } from "@/types";
 
-export async function GET(request: Request) {
+export async function GET() {
   //featcha the user and their email and format it and return
 
   try {
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    if (error instanceof Error) console.log(error.stack);
+    if (error instanceof Error) console.error(error.stack);
     return Response.json(
       {
         success: false,

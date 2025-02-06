@@ -10,7 +10,7 @@ export default function Page() {
     try {
       await signIn("passkey", {});
     } catch (err) {
-      console.log("passkey error:", err);
+      console.error("passkey error:", err);
     }
   }
 

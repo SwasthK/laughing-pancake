@@ -65,8 +65,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (error instanceof Error) console.log("Error:", error.stack);
-    else console.log("Error: Unexpected error occurred");
+    if (error instanceof Error) console.error("Error:", error.stack);
+    else console.error("Error: Unexpected error occurred");
 
     return Response.json(
       {

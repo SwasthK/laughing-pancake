@@ -1,10 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useEditor } from "novel";
 import { Check, Trash } from "lucide-react";
-import {
-  useEffect,
-  useRef,
-} from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   PopoverContent,
@@ -17,6 +14,7 @@ export function isValidUrl(url: string) {
     new URL(url);
     return true;
   } catch (e) {
+    console.error(e);
     return false;
   }
 }
@@ -27,6 +25,7 @@ export function getUrlFromString(str: string) {
       return new URL(`https://${str}`).toString();
     }
   } catch (e) {
+    console.error(e);
     return null;
   }
 }
@@ -98,7 +97,7 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
               <Trash className="h-4 w-4" />
             </Button>
           ) : (
-            <Button size="icon" className="h-8" >
+            <Button size="icon" className="h-8">
               <Check className="h-4 w-4" />
             </Button>
           )}

@@ -1,4 +1,4 @@
-import { IconFlag, IconFlagBolt } from "@tabler/icons-react";
+import { IconFlagBolt } from "@tabler/icons-react";
 
 export default function LeaderBoard() {
   return (
@@ -12,7 +12,7 @@ export default function LeaderBoard() {
         </div>
         <p className="text-sm">
           Total of 11 departments in the race
-          <IconFlagBolt className="inline-block mx-2 h-4 w-4"/>
+          <IconFlagBolt className="inline-block mx-2 h-4 w-4" />
         </p>
       </div>
     </div>

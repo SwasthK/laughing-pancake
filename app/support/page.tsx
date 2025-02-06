@@ -1,5 +1,5 @@
 import { IconBrandGithub } from "@tabler/icons-react";
-import { ChevronDown } from "lucide-react";
+// import { ChevronDown } from "lucide-react";
 
 export default function SupportPage() {
   return (
@@ -10,8 +10,7 @@ export default function SupportPage() {
         </p>
 
         <p className="text-black text-sm">
-          For any issues or bugs in the app, please contact us at this
-          email
+          For any issues or bugs in the app, please contact us at this email
         </p>
 
         <p className="mt-2 font-mono text-violet-900 font-semibold cursor-pointer">

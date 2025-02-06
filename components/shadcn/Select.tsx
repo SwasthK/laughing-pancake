@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/select";
 
 export function Select({
-  label,
   items,
   sortIndex,
   setSortIndex,
@@ -21,7 +20,7 @@ export function Select({
   sortIndex: number;
   setSortIndex: React.Dispatch<React.SetStateAction<number>>;
 }) {
-  const defaultValue = items[sortIndex]?.value || "";
+  // const defaultValue = items[sortIndex]?.value || "";
 
   return (
     <SelectComponent

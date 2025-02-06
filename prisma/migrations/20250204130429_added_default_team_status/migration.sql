@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Team" ALTER COLUMN "teamStatus" SET DEFAULT 'PENDING';

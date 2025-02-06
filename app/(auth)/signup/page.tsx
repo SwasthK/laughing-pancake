@@ -9,7 +9,7 @@ export default function Page() {
     try {
       await googleLogin();
     } catch (err) {
-      console.log("google error:", err);
+      console.error("google error:", err);
     }
   }
 

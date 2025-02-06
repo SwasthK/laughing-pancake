@@ -7,9 +7,9 @@ import { Prisma } from "@prisma/client";
 export async function POST(request: Request) {
   const body: {
     eventId: string;
-    teamId: string;
+    teamKey: string;
   } = await request.json();
-  console.log(body);
+
   const session = await auth();
   //(optional check) if session expired
   if (session?.expires && new Date(session.expires).getTime() <= Date.now()) {
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   const userEmail = session?.user?.email as string;
 
   //replace this with zod
-  if (!body.eventId || !body.teamId) {
+  if (!body.eventId || !body.teamKey) {
     return Response.json(
       {
         success: false,
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   try {
     const team = await prisma.team.findFirst({
       where: {
-        teamId: body.teamId,
+        teamKey: body.teamKey,
       },
     });
 
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       where: {
         eventId: body.eventId,
         userId: userId,
-        teamId: body.teamId,
+        teamId: team.teamId,
       },
     });
 
