@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       await tx.poster.create({
         data: {
           title: body.poster.title,
-          image: "https://source.unsplash.com/random", //TODO: Upload image to object store,
+          image: body.poster.picture,
           description: JSON.stringify(body.poster.description), //make this optional
           programId: programData.programId,
           brochure: body.poster.brochure,

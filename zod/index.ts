@@ -50,9 +50,7 @@ export const createEventFormSchema = z.object({
     .max(50, {
       message: "Title seems too long",
     }),
-  picture: z.custom<File>((value) => value instanceof File && value.size > 0, {
-    message: "Invalid picture",
-  }),
+  picture: z.string({ message: "Invalid image link" }).url({ message: "Invalid image link" }),
   description: z
     .object({
       type: z.string({ message: "Invalid content for event description" }),

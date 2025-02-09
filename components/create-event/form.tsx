@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import {  useState } from "react";
 import { Button } from "../ui/button";
 import {
   CreateDescriptionBlock,
   CreateEventFormPreferencesBlock,
   CreateFormContactBlock,
   CreateFormDateAndTimeBlock,
-  CreateFormEventBlock,
   CreateFormVenueBlock,
 } from "./blocks/form-components";
 import { Form } from "@/components/ui/form";
@@ -18,9 +17,12 @@ import { createEventFormSchema } from "@/zod";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { defaultValues, normalizedData, onError } from "./form-methods";
+import { CreatePosterNameAndCoverBlock } from "./blocks/poster-name-block";
+import { useEdgeStore } from "@/lib/edgestore";
 
 export default function CreateEventForm() {
   const [loading, setLoading] = useState(false);
+  const { edgestore } = useEdgeStore();
 
   const form = useForm<z.infer<typeof createEventFormSchema>>({
     resolver: zodResolver(createEventFormSchema),
@@ -28,11 +30,13 @@ export default function CreateEventForm() {
   });
 
   async function onSubmit(formdata: z.infer<typeof createEventFormSchema>) {
-    console.log("Data", formdata);
+    setLoading(true);
+    await edgestore.publicFiles.confirmUpload({
+      url: formdata.picture,
+    });
+
     const data = normalizedData(formdata);
     if (!data) return;
-
-    setLoading(true);
 
     // Actual API Call goes here
     try {
@@ -85,7 +89,7 @@ export default function CreateEventForm() {
           className="flex flex-col gap-4 w-full"
         >
           <div className="grid grid-cols-9 xl:grid-cols-9 gap-4 ">
-            <CreateFormEventBlock form={form} />
+            <CreatePosterNameAndCoverBlock form={form} />
             <CreateFormDateAndTimeBlock form={form} />
             <CreateDescriptionBlock form={form}></CreateDescriptionBlock>
             <CreateFormVenueBlock form={form}></CreateFormVenueBlock>
