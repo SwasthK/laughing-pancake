@@ -1,8 +1,11 @@
 import { auth } from "@/auth";
 import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
+import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
 import { Prisma } from "@prisma/client";
+
+import { z } from "zod";
 
 export async function POST(request: Request) {
   const body: {
@@ -11,43 +14,29 @@ export async function POST(request: Request) {
   } = await request.json();
 
   const session = await auth();
-  //(optional check) if session expired
-  if (session?.expires && new Date(session.expires).getTime() <= Date.now()) {
-    return Response.json(
-      {
-        success: false,
-        error: "Session expired",
-      },
-      {
-        status: HttpStatusCode.Unauthorized,
-      }
-    );
-  }
   const userEmail = session?.user?.email as string;
 
-  //replace this with zod
-  if (!body.eventId || !body.teamKey) {
+  const RequestCredSchema = z.object({
+    eventId: z
+      .string({ message: "event Id missing" })
+      .min(1, { message: "event Id missing" }),
+    teamKey: z.string({ message: "teamKey is missing" }).min(1, {
+      message: "teamKey is missing",
+    }),
+  });
+
+  const parseResult = RequestCredSchema.safeParse(body);
+  if (!parseResult.success) {
     return Response.json(
-      {
-        success: false,
-        error: "Event ID or Team ID not found",
-      },
+      new ApiError(
+        parseResult.error.errors[0].message,
+        parseResult.error.errors
+      ),
       {
         status: HttpStatusCode.BadRequest,
       }
     );
   }
-  //   if (!params.programSlug) {
-  //     return Response.json(
-  //       {
-  //         success: false,
-  //         error: "Program slug not found",
-  //       },
-  //       {
-  //         status: HttpStatusCode.BadRequest,
-  //       }
-  //     );
-  //   }
 
   //if there is two pariticpatns on same event
 
@@ -75,15 +64,9 @@ export async function POST(request: Request) {
       noOfParitipants?._count?.Participant !== undefined &&
       noOfParitipants._count.Participant >= noOfParitipants.participants
     ) {
-      return Response.json(
-        {
-          success: false,
-          error: "Event is full",
-        },
-        {
-          status: HttpStatusCode.BadRequest,
-        }
-      );
+      return Response.json(new ApiError("Maximum participants reached", null), {
+        status: HttpStatusCode.BadRequest,
+      });
     }
     const team = await prisma.team.findFirst({
       where: {
@@ -92,15 +75,9 @@ export async function POST(request: Request) {
     });
 
     if (!team) {
-      return Response.json(
-        {
-          success: false,
-          error: "Team not found",
-        },
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("No team found", null), {
+        status: HttpStatusCode.NotFound,
+      });
     }
     const userId = await getIdByEmail(userEmail);
 
@@ -112,40 +89,31 @@ export async function POST(request: Request) {
       },
     });
     if (!participant) {
-      return Response.json(
-        {
-          success: false,
-          error: "Failed to register",
-        },
-        {
-          status: HttpStatusCode.InternalServerError,
-        }
-      );
+      return Response.json(new ApiError("Failed to register", null), {
+        status: HttpStatusCode.InternalServerError,
+      });
     }
 
     return Response.json(
-      {
-        success: true,
-        message: "Registration successful",
-        data: participant,
-      },
+      new ApiResponse("Registration successful", participant),
       {
         status: HttpStatusCode.OK,
       }
     );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      console.error("DBError:", error.stack);
-      return Response.json(
-        {
-          success: false,
-          error: "Failed to register",
-          detail: error.message,
-        },
-        {
-          status: HttpStatusCode.InternalServerError,
-        }
-      );
+      console.error("DBError:", error.code);
+      if (error.code === "P2002") {
+        return Response.json(
+          new ApiError("Already registered to other event", error.meta),
+          {
+            status: HttpStatusCode.BadRequest,
+          }
+        );
+      }
+      return Response.json(new ApiError("Failed to register", error.message), {
+        status: HttpStatusCode.InternalServerError,
+      });
     }
     if (error instanceof Error) console.error("Error:", error.stack);
     else console.error("unexpected error ocured");

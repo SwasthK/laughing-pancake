@@ -1,6 +1,7 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prismaCleint";
+import { ApiError, ApiResponse } from "@/lib/response";
 import { FormattedEvent, HttpStatusCode } from "@/types";
+import { z } from "zod";
 
 export async function GET(
   request: Request,
@@ -9,30 +10,16 @@ export async function GET(
   const programSlug = (await params).programSlug;
   const { searchParams } = new URL(request.url);
 
-  //check for user session
-  const session = await auth();
-  //(optional check) if session expired
-  if (session?.expires && new Date(session.expires).getTime() <= Date.now()) {
-    return Response.json(
-      {
-        success: false,
-        error: "Session expired",
-      },
-      {
-        status: HttpStatusCode.Unauthorized,
-      }
-    );
-  }
-
-  //validate the team id
   const teamKey = searchParams.get("teamKey");
-  // const teamKey = searchParams.get("teamKey");   //disabled for now
-  if (!teamKey) {
+  const RequestcredSchema = z.object({
+    teamKey: z.string().min(5, { message: "teamkey is requred" }),
+    programSlug: z.string().min(2, { message: "program slug required" }),
+  });
+
+  const result = RequestcredSchema.safeParse({ teamKey, programSlug });
+  if (!result.success) {
     return Response.json(
-      {
-        success: false,
-        error: "Team key is not present",
-      },
+      new ApiError(result.error.errors[0].message, result.error.errors),
       {
         status: HttpStatusCode.BadRequest,
       }
@@ -44,33 +31,24 @@ export async function GET(
   try {
     team = await prisma.team.findFirst({
       where: {
-        teamKey,
+        teamKey: result.data.teamKey,
+        Program: {
+          programSlug: result.data.programSlug,
+        },
       },
     });
 
     if (!team) {
-      return Response.json(
-        {
-          success: false,
-          error: "Team not found",
-        },
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("No team found", null), {
+        status: HttpStatusCode.NotFound,
+      });
     }
   } catch (error) {
     if (error instanceof Error) console.error(error);
     else console.error("Error in fetching team");
-    return Response.json(
-      {
-        success: false,
-        error: "Internal Server Error",
-      },
-      {
-        status: HttpStatusCode.InternalServerError,
-      }
-    );
+    return Response.json(new ApiError("Internal Server Error", null), {
+      status: HttpStatusCode.InternalServerError,
+    });
   }
 
   try {
@@ -115,15 +93,9 @@ export async function GET(
 
     //just in case
     if (!res) {
-      return Response.json(
-        {
-          success: false,
-          error: "No data found",
-        },
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("No event found for the team", null), {
+        status: HttpStatusCode.NotFound,
+      });
     }
 
     const formattedData: FormattedEvent[] = res.Event.map((event) => {
@@ -145,11 +117,7 @@ export async function GET(
 
     //format the data
     return Response.json(
-      {
-        success: true,
-        message: `Event form fetched successfullyf for ${teamKey}`,
-        data: formattedData,
-      },
+      new ApiResponse("Fetched the events for the team", formattedData),
       {
         status: HttpStatusCode.OK,
       }
@@ -157,14 +125,8 @@ export async function GET(
   } catch (error) {
     if (error instanceof Error) console.error(error);
     else console.error("Error in fetching team");
-    return Response.json(
-      {
-        success: false,
-        error: "Internal Server Error",
-      },
-      {
-        status: HttpStatusCode.InternalServerError,
-      }
-    );
+    return Response.json(new ApiError("Internal Server Error", null), {
+      status: HttpStatusCode.InternalServerError,
+    });
   }
 }
