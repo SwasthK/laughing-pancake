@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const defaultValues: z.infer<typeof createEventFormSchema> = {
   title: "",
-  picture: undefined as unknown as File,
+  picture: "",
   description: {
     type: "doc",
     content: [
@@ -34,7 +34,7 @@ export const defaultValues: z.infer<typeof createEventFormSchema> = {
   formType: FormType.NONE,
 };
 
-export const normalizedData = (
+export const normalizedData = async (
   formdata: z.infer<typeof createEventFormSchema>
 ) => {
   let err = null;

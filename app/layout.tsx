@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationBar } from "@/components/NavigationBar";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,11 +40,13 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <main className="px-8 sm:px-20 lg:px-40">
-              <NavigationBar />
-              {children}
-            </main>
-            <Toaster richColors/>
+            <EdgeStoreProvider>
+              <main className="px-8 sm:px-20 lg:px-40">
+                <NavigationBar />
+                {children}
+              </main>
+            </EdgeStoreProvider>
+            <Toaster richColors />
           </ThemeProvider>
         </SessionProvider>
       </body>
