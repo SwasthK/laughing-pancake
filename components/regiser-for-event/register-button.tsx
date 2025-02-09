@@ -13,6 +13,7 @@ import { Input } from "../ui/input";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "../ui/tabs";
 import Link from "next/link";
 import { toast } from "sonner";
+import axios from "axios";
 
 export default function RegisterButton({
   link,
@@ -27,24 +28,24 @@ export default function RegisterButton({
     e.preventDefault();
     const teamName = (e.target as HTMLFormElement).teamName.value;
     try {
-      const res = await fetch(`/api/team/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ programSlug, teamName }),
+      const res = await axios.post(`/api/team/create`, {
+        programSlug,
+        teamName,
       });
-      const data = await res.json();
-      if (data.success) {
+      if (!res.data.success) {
         toast.success("Team created successfully");
         const url = new URL(link);
-        url.searchParams.set("teamKey", data.data);
+        url.searchParams.set("teamKey", res.data.data);
         router.push(url.toString());
       } else {
-        toast.error("You have already created a team");
+        toast.error("team is not created");
       }
     } catch (err) {
-      toast.error("An error occurred");
+      if (axios.isAxiosError(err)) {
+        toast.error(err?.response?.data.error);
+      } else {
+        toast.error("An error occurred");
+      }
       console.error(err);
     }
   }
@@ -52,26 +53,23 @@ export default function RegisterButton({
   async function joinTeam(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const res = await fetch(`/api/team/exist`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          teamKey: (e.target as HTMLFormElement).teamKey.value,
-        }),
+      const res = await axios.post(`/api/team/exist`, {
+        teamKey: (e.target as HTMLFormElement).teamKey.value,
       });
-      const data = await res.json();
-      if (!data.success) {
+      if (!res.data.success) {
         toast.error("Team not found");
         return;
       }
       const url = new URL(link);
-      url.searchParams.set("teamKey", data.data);
+      url.searchParams.set("teamKey", res.data.data);
       router.push(url.toString());
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err?.response?.data.error);
+      } else {
+        toast.error("An error occurred");
+      }
+      console.error(err);
     }
   }
 
