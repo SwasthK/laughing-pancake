@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { defaultValues, normalizedData, onError } from "./form-methods";
 import { CreatePosterNameAndCoverBlock } from "./blocks/poster-name-block";
 import { useEdgeStore } from "@/lib/edgestore";
+import axios from "axios";
 
 export default function CreateEventForm() {
   const [loading, setLoading] = useState(false);
@@ -39,43 +40,38 @@ export default function CreateEventForm() {
     if (!data) return;
 
     // Actual API Call goes here
+
     try {
-      const res = await fetch("/api/poster/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      const resData = await res.json();
-      console.log(resData);
       const promise = () =>
-        new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve(
-                <div>
-                  <strong>Event Created</strong>
-                  <code className="text-sm">
-                    <pre className="text-sm" style={{ whiteSpace: "pre-wrap" }}>
-                      {JSON.stringify(data, null, 2)}
-                    </pre>
-                  </code>
-                </div>
-              ),
-            800
-          )
-        );
+        new Promise((resolve, reject) => {
+          axios
+            .post("/api/poster/create", data)
+            .then((data) => {
+              console.log(data);
+              resolve(data.data.message);
+            })
+            .catch((error) => {
+              console.log();
+              reject(error.response.data.error);
+            });
+        });
+
       toast.promise(promise(), {
         loading: "Loading...",
         success: (data: any) => {
           return <div className="cursor-pointer">{data}</div>;
         },
-        error: "Error",
+        error: (data) => {
+          return <div className="cursor-pointer">{data}</div>;
+        },
         dismissible: true,
       });
     } catch (error: any) {
-      toast.error(error?.message || "Something went wrong");
+      if (error !== undefined && axios.isAxiosError(error)) {
+        toast.error(error?.response?.data.message);
+      } else {
+        toast.error("Something went wrong");
+      }
     } finally {
       setLoading(false);
     }

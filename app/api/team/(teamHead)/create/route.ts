@@ -5,6 +5,7 @@ import {
   getProgramIdBySlug,
 } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
+import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -13,35 +14,23 @@ export async function POST(request: Request) {
   //user ID
   const session = await auth();
 
-  //(optional check) if session expired
-  if (session?.expires && new Date(session.expires).getTime() <= Date.now()) {
-    return Response.json(
-      {
-        success: false,
-        error: "Session expired",
-      },
-      {
-        status: HttpStatusCode.Unauthorized,
-      }
-    );
-  }
   const userId = await getIdByEmail(session?.user?.email as string);
 
   const requestBodySchema = z.object({
     programSlug: z.string(),
-    teamName: z.string().nullable(),
+    teamName: z.string(),
   });
 
   const reqBody: { programSlug: string; teamName: string | null } =
     await request.json();
-  const { data: body, success } = requestBodySchema.safeParse(reqBody);
+  const { data: body, success, error } = requestBodySchema.safeParse(reqBody);
 
   if (!success) {
     return Response.json(
-      {
-        success: false,
-        error: "Invalid request body or missing program slug",
-      },
+      new ApiError(
+        "Invalid request body or missing program slug",
+        error.errors
+      ),
       {
         status: HttpStatusCode.BadRequest,
       }
@@ -50,10 +39,7 @@ export async function POST(request: Request) {
   const programId = await getProgramIdBySlug(body.programSlug);
   if (!programId) {
     return Response.json(
-      {
-        success: false,
-        error: "Program not found",
-      },
+      new ApiError("Program not found", { programSlug: body.programSlug }),
       {
         status: HttpStatusCode.NotFound,
       }
@@ -71,21 +57,14 @@ export async function POST(request: Request) {
     });
     if (!team) {
       return Response.json(
-        {
-          success: false,
-          error: "Team not created",
-        },
+        new ApiError("Team not created", { teamName: body.teamName }),
         {
           status: HttpStatusCode.InternalServerError,
         }
       );
     }
     return Response.json(
-      {
-        success: true,
-        message: "Team created successfully",
-        data: team.teamKey,
-      },
+      new ApiResponse("Team created successfully", team.teamKey),
       {
         status: HttpStatusCode.OK,
       }
@@ -93,13 +72,9 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return Response.json(
+        new ApiError("you have already created a team", error.message),
         {
-          success: false,
-          error: "Team not created",
-          details: error.message,
-        },
-        {
-          status: HttpStatusCode.NotFound,
+          status: HttpStatusCode.Conflict,
         }
       );
     }
@@ -107,14 +82,8 @@ export async function POST(request: Request) {
     if (error instanceof Error) console.error("Error:", error.stack);
     else console.error("Error: Unexpected error occurred");
 
-    return Response.json(
-      {
-        success: false,
-        error: "Internal Server Error",
-      },
-      {
-        status: HttpStatusCode.InternalServerError,
-      }
-    );
+    return Response.json(new ApiError("Failed to create team", null), {
+      status: HttpStatusCode.InternalServerError,
+    });
   }
 }

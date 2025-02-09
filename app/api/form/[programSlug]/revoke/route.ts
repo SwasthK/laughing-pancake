@@ -1,8 +1,10 @@
 import { auth } from "@/auth";
 import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
+import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
 import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 export async function POST(request: Request) {
   const body: {
@@ -11,43 +13,29 @@ export async function POST(request: Request) {
   } = await request.json();
 
   const session = await auth();
-  //(optional check) if session expired
-  if (session?.expires && new Date(session.expires).getTime() <= Date.now()) {
-    return Response.json(
-      {
-        success: false,
-        error: "Session expired",
-      },
-      {
-        status: HttpStatusCode.Unauthorized,
-      }
-    );
-  }
   const userEmail = session?.user?.email as string;
 
-  //replace this with zod
-  if (!body.eventId || !body.teamKey) {
+  const RequestCredSchema = z.object({
+    eventId: z
+      .string({ message: "event Id missing" })
+      .min(1, { message: "event Id missing" }),
+    teamKey: z.string({ message: "teamKey is missing" }).min(1, {
+      message: "teamKey is missing",
+    }),
+  });
+
+  const parseResult = RequestCredSchema.safeParse(body);
+  if (!parseResult.success) {
     return Response.json(
-      {
-        success: false,
-        error: "Event ID or Team ID not found",
-      },
+      new ApiError(
+        parseResult.error.errors[0].message,
+        parseResult.error.errors
+      ),
       {
         status: HttpStatusCode.BadRequest,
       }
     );
   }
-  //   if (!params.programSlug) {
-  //     return Response.json(
-  //       {
-  //         success: false,
-  //         error: "Program slug not found",
-  //       },
-  //       {
-  //         status: HttpStatusCode.BadRequest,
-  //       }
-  //     );
-  //   }
 
   try {
     const team = await prisma.team.findFirst({
@@ -57,15 +45,9 @@ export async function POST(request: Request) {
     });
 
     if (!team) {
-      return Response.json(
-        {
-          success: false,
-          error: "Team not found",
-        },
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("Team not found", null), {
+        status: HttpStatusCode.NotFound,
+      });
     }
     const userId = await getIdByEmail(userEmail);
 
@@ -78,15 +60,9 @@ export async function POST(request: Request) {
     });
 
     if (!findParticipant) {
-      return Response.json(
-        {
-          success: false,
-          error: "Participant not found",
-        },
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("Participant not found", null), {
+        status: HttpStatusCode.NotFound,
+      });
     }
 
     const participant = await prisma.participant.delete({
@@ -95,23 +71,13 @@ export async function POST(request: Request) {
       },
     });
     if (!participant) {
-      return Response.json(
-        {
-          success: false,
-          error: "Failed to register",
-        },
-        {
-          status: HttpStatusCode.InternalServerError,
-        }
-      );
+      return Response.json(new ApiError("Failed to unregister", null), {
+        status: HttpStatusCode.InternalServerError,
+      });
     }
 
     return Response.json(
-      {
-        success: true,
-        message: "Unregistraion successful",
-        data: participant,
-      },
+      new ApiResponse("Unregistraion successful", participant),
       {
         status: HttpStatusCode.OK,
       }
@@ -120,11 +86,7 @@ export async function POST(request: Request) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       console.error("DBError:", error.stack);
       return Response.json(
-        {
-          success: false,
-          error: "Failed to unregister",
-          detail: error.message,
-        },
+        new ApiError("Failed to unregister", error.message),
         {
           status: HttpStatusCode.InternalServerError,
         }
@@ -133,13 +95,7 @@ export async function POST(request: Request) {
     if (error instanceof Error) console.error("Error:", error.stack);
     else console.error("unexpected error ocured");
   }
-  return Response.json(
-    {
-      success: false,
-      error: "Internal Server Error",
-    },
-    {
-      status: HttpStatusCode.InternalServerError,
-    }
-  );
+  return Response.json(new ApiError("Internal Server Error", null), {
+    status: HttpStatusCode.InternalServerError,
+  });
 }
