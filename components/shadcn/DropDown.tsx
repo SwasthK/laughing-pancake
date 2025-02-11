@@ -22,6 +22,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Tooltip } from "../Tooltip";
 import Link from "next/link";
 import React from "react";
+import { Button } from "../ui/button";
+import { Logout } from "@/app/action";
+import { signOut } from "@/auth";
+import LogoutButton from "../logout/logout";
 
 export function DropdownMenu() {
   return (
@@ -81,7 +85,7 @@ export function DropdownMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem to="/">
           <LogOut />
-          <span>Log out</span>
+          <LogoutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenuContainer>

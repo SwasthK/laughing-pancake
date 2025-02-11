@@ -4,41 +4,71 @@ import slugify from "slugify";
 import { FormType, HttpStatusCode, NormalizedFormData } from "@/types";
 import { auth } from "@/auth";
 import { getIdByEmail, getIdByRollNumber } from "@/lib/api-helper";
+import { z } from "zod";
+import { ApiError, ApiResponse } from "@/lib/response";
 
 export async function POST(request: Request) {
-  //user ID
   const session = await auth();
-
-  //(optional check) if session expired
-  if (session?.expires && new Date(session.expires).getTime() <= Date.now()) {
-    return Response.json(
-      {
-        success: false,
-        error: "Session expired",
-      },
-      {
-        status: HttpStatusCode.Unauthorized,
-      }
-    );
-  }
-
   const userId = await getIdByEmail(session?.user?.email as string);
 
   const body: NormalizedFormData = await request.json();
+  console.log("body", body);
+  const reqBodySchema = z.object({
+    poster: z.object({
+      title: z.string({ message: "title is requried" }),
+      picture: z.any({ message: "invalid image format" }).optional(),
+      description: z.any().optional(),
+      date: z.string({ message: "date is required" }),
+      time: z.object({
+        hour: z.number({ message: "hour is required" }),
+        minute: z.number({ message: "minute is required" }),
+      }),
+      venue: z.string({ message: "venue is required" }),
+      phone: z.string({ message: "phone is required" }),
+      registration: z.object({
+        end: z.string({ message: "registration end date is required" }),
+      }),
+      eventType: z.string({ message: "event type is required" }),
+      organizedBy: z.string({ message: "organized by is required" }),
+      brochure: z.string({ message: "brochure is required" }),
+      link: z.string().optional(),
+    }),
+    formType: z.nativeEnum(FormType),
+    events: z
+      .array(
+        z.object({
+          name: z.string({ message: "name is required" }),
+          caption: z.string({ message: "caption is required" }),
+          participants: z.number({ message: "participants is required" }),
+          head: z.array(
+            z.object({
+              roll: z.string({ message: "roll is required" }),
+            })
+          ),
+        })
+      )
+      .optional(),
+  });
 
-  //validate body
-  //TODO: check with zod
-  if (!body || !body.poster || !body.poster.title) {
+  const parseResult = reqBodySchema.safeParse(body);
+  if (!parseResult.success) {
+    console.error(parseResult.error.errors);
     return Response.json(
-      {
-        success: false,
-        error: "Invalid request body or missing poster data",
-      },
+      new ApiError(
+        parseResult.error.errors[0].message,
+        parseResult.error.errors
+      ),
       {
         status: HttpStatusCode.BadRequest,
       }
     );
   }
+
+  // if (!body || !body.poster || !body.poster.title) {
+  //   return Response.json(new ApiError("Invalid poster data"), {
+  //     status: HttpStatusCode.BadRequest,
+  //   });
+  // }
 
   //slug ( need to make more optimized)
   const slugTitle = slugify(body.poster.title);
@@ -97,7 +127,7 @@ export async function POST(request: Request) {
         data: {
           title: body.poster.title,
           image: body.poster.picture,
-          description: JSON.stringify(body.poster.description), //make this optional
+          description: JSON.stringify(body.poster.description),
           programId: programData.programId,
           brochure: body.poster.brochure,
           venue: body.poster.venue,
@@ -115,13 +145,9 @@ export async function POST(request: Request) {
     });
 
     return Response.json(
-      {
-        success: true,
-        message: "Poster created successfully",
-        data: {
-          programId: result.programId,
-        },
-      },
+      new ApiResponse("Program successfully", {
+        programId: result.programId,
+      }),
       {
         status: HttpStatusCode.Created,
       }
@@ -135,22 +161,14 @@ export async function POST(request: Request) {
         (error.meta?.target as string[])?.includes("programSlug")
       ) {
         return Response.json(
-          {
-            success: false,
-            error: "Program with same title already exists",
-            details: error.message,
-          },
+          new ApiError("Program with same title exists", error.message),
           {
             status: HttpStatusCode.Conflict,
           }
         );
       }
       return Response.json(
-        {
-          success: false,
-          error: "Error occurred during poster creation",
-          details: error.message,
-        },
+        new ApiError("Error occurred during poster creation", error.message),
         {
           status: HttpStatusCode.InternalServerError,
         }
@@ -161,11 +179,10 @@ export async function POST(request: Request) {
     else console.error("Error: Unexpected error occurred");
 
     return Response.json(
-      {
-        success: false,
-        error: "Error occurred during poster creation",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      new ApiError(
+        "Error occurred during poster creation",
+        error instanceof Error ? error.message : "Unknown error"
+      ),
       {
         status: HttpStatusCode.InternalServerError,
       }

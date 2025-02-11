@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -23,7 +23,13 @@ import {
 } from "../ui/dialog";
 import { Badge } from "../ui/badge";
 import { toast } from "sonner";
+import { FormattedEvent } from "@/types";
+import { FetchResponse } from "@/lib/fetcher";
+import { KeyedMutator } from "swr";
+import axios from "axios";
+import { set } from "zod";
 export default function EventRegisterCard({
+  mutate,
   eventId,
   teamKey,
   title,
@@ -34,6 +40,7 @@ export default function EventRegisterCard({
   programSlug,
   userExist,
 }: {
+  mutate: KeyedMutator<FetchResponse<FormattedEvent[]>>;
   eventId: string;
   teamKey: string;
   title: string;
@@ -44,49 +51,47 @@ export default function EventRegisterCard({
   programSlug: string | string[] | undefined;
   userExist: boolean;
 }) {
+  const [loader, setLoader] = useState(false);
   const register = async () => {
+    setLoader(true);
     try {
-      const response = await fetch(`/api/form/${programSlug}/register`, {
-        method: "POST",
-        body: JSON.stringify({
-          eventId,
-          teamKey,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await axios.post(`/api/form/${programSlug}/register`, {
+        eventId,
+        teamKey,
       });
+      mutate();
 
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
-      const data = await response.json();
-      console.log("Registration successful:", data);
-      toast.success("registration success");
+      toast.success(response.data.message);
     } catch (error) {
-      toast.error("Failed to register");
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
       console.error("There was a problem with the registration:", error);
+    } finally {
+      setLoader(false);
     }
   };
-  const unregister = async () => {
-    try {
-      const response = await fetch(`/api/form/${programSlug}/revoke`, {
-        method: "POST",
-        body: JSON.stringify({
-          eventId,
-          teamKey,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
 
-      const data = await response.json();
-      console.log("Unregisterd successful:", data);
-      toast.success("Unregistraion success");
+  const unregister = async () => {
+    setLoader(true);
+    try {
+      const response = await axios.post(`/api/form/${programSlug}/revoke`, {
+        eventId,
+        teamKey,
+      });
+      toast.success(response.data.message);
+      mutate();
     } catch (error) {
-      toast.error("Failed to unregistraion");
-      console.error("There was a problem with the unregistraion:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+      console.error("There was a problem with the registration:", error);
+    } finally {
+      setLoader(false);
     }
   };
   return (
@@ -152,15 +157,17 @@ export default function EventRegisterCard({
                 </div>
                 {userExist ? (
                   <Button
+                    disabled={!loader}
                     className="w-full"
-                    onClick={async () => await unregister()}
+                    onClick={unregister}
                   >
                     Cofirm Unregistration
                   </Button>
                 ) : (
                   <Button
+                    disabled={!loader}
                     className="w-full"
-                    onClick={async () => await register()}
+                    onClick={register}
                   >
                     Confirm Registration
                   </Button>

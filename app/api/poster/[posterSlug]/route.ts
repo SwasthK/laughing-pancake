@@ -1,22 +1,18 @@
 import { prisma } from "@/lib/prismaCleint";
+import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
 import { Poster } from "@/types";
+import { NextRequest } from "next/server";
 
 export async function GET(
-  request: Request,
+  requst: NextRequest,
   { params }: { params: { posterSlug: string } }
 ) {
   const posterSlug = (await params).posterSlug;
   if (!posterSlug) {
-    return Response.json(
-      {
-        success: false,
-        error: "No poster slug provided",
-      },
-      {
-        status: HttpStatusCode.BadRequest,
-      }
-    );
+    return Response.json(new ApiError("Invalid poster slug"), {
+      status: HttpStatusCode.BadRequest,
+    });
   }
 
   try {
@@ -43,15 +39,9 @@ export async function GET(
     });
 
     if (!poster) {
-      return Response.json(
-        {
-          success: false,
-          error: "Poster not found",
-        },
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("Poster not found"), {
+        status: HttpStatusCode.NotFound,
+      });
     }
     const formattedEvent: Poster = {
       ...poster,
@@ -71,22 +61,18 @@ export async function GET(
         })
         .replace(/\//g, "-"),
     };
-    return Response.json({
-      sucess: true,
-      data: formattedEvent,
-    });
+    return Response.json(
+      new ApiResponse("Poster fetched successfully", formattedEvent),
+      {
+        status: HttpStatusCode.OK,
+      }
+    );
   } catch (error) {
     if (error instanceof Error) console.error(error.message);
     else console.error("Unknown error");
 
-    return Response.json(
-      {
-        success: false,
-        error: "Internal server error",
-      },
-      {
-        status: HttpStatusCode.InternalServerError,
-      }
-    );
+    return Response.json(new ApiError("Internal server error"), {
+      status: HttpStatusCode.InternalServerError,
+    });
   }
 }
