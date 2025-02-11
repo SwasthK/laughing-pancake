@@ -112,6 +112,7 @@ export type NormalizedFormData = {
   poster: {
     title: string;
     date: string;
+    picture: string;
     time: {
       hour: number;
       minute: number;
