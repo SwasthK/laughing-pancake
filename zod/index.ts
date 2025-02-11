@@ -39,6 +39,30 @@ export const linkSchema = z
     message: "either switch form type to 'NONE' or 'INTERNAL or add proper url",
   });
 
+export const profileUpdateSchema = z
+  .object({
+    username: z
+      .string()
+      .min(2, { message: "Username seems too short" })
+      .max(20, { message: "Username seems too long" })
+      .optional(),
+
+    bio: z
+      .string()
+      .min(2, { message: "Bio seems too short" })
+      .max(100, { message: "Bio seems too long" })
+      .optional(),
+
+  })
+  .refine(
+    (data) =>
+      Object.values(data).some(
+        (value) => value !== null && value !== undefined
+      ),
+    { message: "At least one field must be provided" }
+  );
+
+
 export const createEventFormSchema = z.object({
   title: z
     .string({

@@ -77,6 +77,7 @@ export const normalizedData = async (
 };
 
 export const onError = (errors: any) => {
+  console.log(errors);
   const errorMessages = Object.values(errors)
     .map((error: any) => error.message)
     .join(", ");
