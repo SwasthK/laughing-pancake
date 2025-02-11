@@ -1,6 +1,5 @@
 "use client";
 
-import { Label } from "@/components/create-event/blocks/form-components";
 import { onError } from "@/components/create-event/form-methods";
 import { ProfileImage } from "@/components/profile/profile-image";
 import { StatBox } from "@/components/profile/statbox";
@@ -9,21 +8,19 @@ import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { profileUpdateSchema } from "@/zod";
-// import { profileUpdateSchema } from "@/zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodHandler } from "@/zod/resolve";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export default function UserProfilePrivate() {
-  const form = useForm<z.infer<typeof profileUpdateSchema>>({});
+  const form = useForm<z.infer<typeof profileUpdateSchema>>();
 
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    let val = form.getValues();
-    console.log("Values", val);
+    const val = form.getValues();
     if (val.bio || val.username) {
       setDisabled(false);
       console.log("make button clickable");
@@ -41,9 +38,32 @@ export default function UserProfilePrivate() {
       }
     });
 
-    toast.success("Updated Data", {
-      description: <code>{JSON.stringify(updatedData, null, 2)}</code>,
+    const { error } = zodHandler(updatedData, profileUpdateSchema);
+    if (error) return toast.error(error);
+
+    const res = await fetch("/api/profile/update-meta-data", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
     });
+
+    toast.promise(
+      res.json().then((data) => {
+        if (!data.success) {
+          throw new Error(data.error);
+        }
+        return data;
+      }),
+      {
+        loading: "Wait a moment...",
+        success: (data) => data.message,
+        error: (err) => err.message,
+      }
+    );
+    form.setValue("username", "");
+    form.setValue("bio", "");
   }
 
   return (

@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { Edit, UserRoundPen } from "lucide-react";
+import { UserRoundPen } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
