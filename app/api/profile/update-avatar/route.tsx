@@ -2,17 +2,17 @@ import { auth } from "@/auth";
 import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { HttpStatusCode } from "@/types";
-import { profileUpdateSchema } from "@/zod";
+import { avatarUrlSchema } from "@/zod";
 import { zodHandler } from "@/zod/resolve";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export async function PUT(request: Request) {
-  const body: z.infer<typeof profileUpdateSchema> = await request.json();
-
+  const body: { url: z.infer<typeof avatarUrlSchema> } = await request.json();
+  
   const session = await auth();
 
-  const { error } = zodHandler(body, profileUpdateSchema);
+  const { error } = zodHandler(body.url, avatarUrlSchema);
   if (error) {
     return Response.json(
       {
@@ -33,17 +33,16 @@ export async function PUT(request: Request) {
         id: userId,
       },
       data: {
-        ...(body.username && { name: body.username }),
-        ...(body.bio && { bio: body.bio }),
+        image: body.url,
       },
     });
 
     return Response.json(
       {
         success: true,
-        message: "Profile Updated Successfuly",
+        message: "Profile Image Updated Successfuly",
         data: {
-          name: result.name,
+          image: result.image,
         },
       },
       {
@@ -57,7 +56,7 @@ export async function PUT(request: Request) {
       return Response.json(
         {
           success: false,
-          error: "Error occurred during profile update",
+          error: "Error occurred during profile image update",
           details: error.message,
         },
         {
@@ -72,7 +71,7 @@ export async function PUT(request: Request) {
     return Response.json(
       {
         success: false,
-        error: "Error occurred during profile update",
+        error: "Error occurred during profile image update",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       {

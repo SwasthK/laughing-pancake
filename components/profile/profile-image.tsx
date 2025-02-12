@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useEdgeStore } from "@/lib/edgestore";
 import { handleImageUploadErrors } from "@/lib/edge-store-helpers";
+import axios, { AxiosResponse } from "axios";
 
 export const ProfileImage = () => {
   const [url, setUrl] = useState<string>("https://github.com/shadcn.png");
@@ -57,13 +58,44 @@ export const ProfileImage = () => {
   };
 
   const handleConfirmUpload = async () => {
-    await edgestore.publicFiles.confirmUpload({
-      url: tempUrl,
-    });
-    setUrl(tempUrl);
-    setTempUrl("");
-    setProgress(0);
-    toast.success("Profile image updated");
+    setProgress(101);
+
+    toast.promise(
+      axios
+        .put(
+          "/api/profile/update-avatar",
+          { url: tempUrl },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then((response) => {
+          if (!response.data) {
+            throw new Error("No response data received");
+          }
+          return response;
+        }),
+      {
+        loading: "Uploading...",
+        success: async (data: AxiosResponse<any>) => {
+          const confirmURL = tempUrl;
+          setUrl(tempUrl);
+          setTempUrl("");
+          setProgress(0);
+          await edgestore.publicFiles.confirmUpload({
+            url: confirmURL,
+          });
+          return data.data.message || "Profile image updated";
+        },
+
+        error: (err: any) => {
+          setProgress(0);
+          return (
+            err.response?.data?.error ||
+            err.message ||
+            "Error updating profile image"
+          );
+        },
+      }
+    );
   };
 
   return (
@@ -109,7 +141,9 @@ export const ProfileImage = () => {
             </Avatar>
             {/* File Input */}
             <Label htmlFor="profileImage" className="text-sm font-medium">
-              {progress > 0 ? `Uploading ${progress}%` : "Upload Image"}
+              {progress > 0 && progress != 101
+                ? `Uploading ${progress}%`
+                : "Upload Image"}
             </Label>
             <Input
               id="profileImage"
@@ -125,7 +159,7 @@ export const ProfileImage = () => {
               onClick={handleConfirmUpload}
               disabled={progress > 0 || !tempUrl}
             >
-              Save Changes
+              {progress === 101 ? "Wait a moment" : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>
