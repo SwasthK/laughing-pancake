@@ -27,7 +27,6 @@ export default function UserProfilePrivate() {
     return () => subscription.unsubscribe(); 
   }, [form]);
   
-
   async function onSubmit(formdata: z.infer<typeof profileUpdateSchema>) {
     const updatedData: Record<string, string> = {};
     Object.entries(formdata).forEach(([key, value]) => {
