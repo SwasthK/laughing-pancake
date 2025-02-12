@@ -62,6 +62,13 @@ export const profileUpdateSchema = z
     { message: "At least one field must be provided" }
   );
 
+export const avatarUrlSchema = z.string({
+  message: "Invalid Avatar URL",
+  required_error: "Avatar URL required",
+  invalid_type_error: "Invalid Type for Avatar URL"
+}).url({
+  message: "Invalid Avatar URL"
+})
 
 export const createEventFormSchema = z.object({
   title: z

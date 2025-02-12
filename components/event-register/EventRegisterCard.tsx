@@ -27,7 +27,6 @@ import { FormattedEvent } from "@/types";
 import { FetchResponse } from "@/lib/fetcher";
 import { KeyedMutator } from "swr";
 import axios from "axios";
-import { set } from "zod";
 export default function EventRegisterCard({
   mutate,
   eventId,

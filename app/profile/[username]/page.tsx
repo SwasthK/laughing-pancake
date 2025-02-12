@@ -20,16 +20,13 @@ export default function UserProfilePrivate() {
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    const val = form.getValues();
-    if (val.bio || val.username) {
-      setDisabled(false);
-      console.log("make button clickable");
-    } else {
-      setDisabled(true);
-      console.log("make button unclickable");
-    }
-  }, [form.watch()]);
-
+    const subscription = form.watch((val) => {
+      setDisabled(!(val.bio || val.username)); 
+    });
+  
+    return () => subscription.unsubscribe(); 
+  }, [form]);
+  
   async function onSubmit(formdata: z.infer<typeof profileUpdateSchema>) {
     const updatedData: Record<string, string> = {};
     Object.entries(formdata).forEach(([key, value]) => {
