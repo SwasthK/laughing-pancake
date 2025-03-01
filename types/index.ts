@@ -166,3 +166,23 @@ export type Poster = {
   endDate: string;
   link: string | null;
 };
+
+export interface userList {
+  name: string | null;
+  roll: number;
+}
+
+export interface EventList {
+  programSlug: string;
+  title: string;
+  image: string;
+  description: string;
+  organizedBy: string;
+}
+
+export enum queryType {
+  trending = "trending",
+  newest = "newest",
+  upcoming = "upcoming",
+  oldest = "oldest",
+}

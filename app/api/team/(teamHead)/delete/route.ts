@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   //user ID
   const session = await auth();
 
-  const userId = await getIdByEmail(session?.user?.email as string);
+  const userId = session?.user?.id as string;
 
   const requestBodySchema = z.object({
     teamKey: z.string(),

@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   CreateDescriptionBlock,
@@ -36,11 +36,10 @@ export default function CreateEventForm() {
       url: formdata.picture,
     });
 
-    const data = normalizedData(formdata);
+    const data = await normalizedData(formdata);
     if (!data) return;
 
     // Actual API Call goes here
-
     try {
       const promise = () =>
         new Promise((resolve, reject) => {

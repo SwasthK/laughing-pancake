@@ -1,18 +1,22 @@
 import { prisma } from "@/lib/prismaCleint"; //actual client
 import { Prisma } from "@prisma/client"; //for error handling
 import slugify from "slugify";
-import { FormType, HttpStatusCode, NormalizedFormData } from "@/types";
+import {
+  FormType,
+  HttpStatusCode,
+  NormalizedFormData,
+  OrganizedBy,
+} from "@/types";
 import { auth } from "@/auth";
-import { getIdByEmail, getIdByRollNumber } from "@/lib/api-helper";
+import { getIdByRollNumber } from "@/lib/api-helper";
 import { z } from "zod";
 import { ApiError, ApiResponse } from "@/lib/response";
 
 export async function POST(request: Request) {
   const session = await auth();
-  const userId = await getIdByEmail(session?.user?.email as string);
+  const userId = session?.user?.id as string;
 
   const body: NormalizedFormData = await request.json();
-  console.log("body", body);
   const reqBodySchema = z.object({
     poster: z.object({
       title: z.string({ message: "title is requried" }),
@@ -29,7 +33,7 @@ export async function POST(request: Request) {
         end: z.string({ message: "registration end date is required" }),
       }),
       eventType: z.string({ message: "event type is required" }),
-      organizedBy: z.string({ message: "organized by is required" }),
+      organizedBy: z.nativeEnum(OrganizedBy),
       brochure: z.string({ message: "brochure is required" }),
       link: z.string().optional(),
     }),
@@ -42,7 +46,9 @@ export async function POST(request: Request) {
           participants: z.number({ message: "participants is required" }),
           head: z.array(
             z.object({
-              roll: z.string({ message: "roll is required" }),
+              roll: z
+                .string({ message: "roll is required" })
+                .or(z.number({ message: "roll is required" })),
             })
           ),
         })

@@ -11,7 +11,7 @@ export async function PUT(request: Request) {
   const body: z.infer<typeof profileUpdateSchema> = await request.json();
 
   const session = await auth();
-
+  const userId = session?.user?.id as string;
   const { error } = zodHandler(body, profileUpdateSchema);
   if (error) {
     return Response.json(
@@ -24,8 +24,6 @@ export async function PUT(request: Request) {
       }
     );
   }
-
-  const userId = await getIdByEmail(session?.user?.email as string);
 
   try {
     const result = await prisma.user.update({

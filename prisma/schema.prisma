@@ -19,6 +19,8 @@ model User {
   Program       Program[]
   EventHead     EventHead[]
   Participant   Participant[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
   Team Team[] @relation("TeamLeader")
 }
@@ -36,6 +38,8 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -43,8 +47,8 @@ model Account {
 }
 
 model Authenticator {
-  id                   String  @id @default(cuid())
-  credentialID         String  @unique
+  id                   String   @id @default(cuid())
+  credentialID         String   @unique
   userId               String
   providerAccountId    String
   credentialPublicKey  String
@@ -52,6 +56,8 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -63,10 +69,12 @@ model Program {
   //arhived status needed
   creadtedByUserID String
 
-  Poster  Poster?
-  Event   Event[]
-  Creator User    @relation(fields: [creadtedByUserID], references: [id], onDelete: Cascade)
-  Team    Team[]
+  Poster    Poster?
+  Event     Event[]
+  Creator   User     @relation(fields: [creadtedByUserID], references: [id], onDelete: Cascade)
+  Team      Team[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([programSlug])
 }
@@ -86,14 +94,18 @@ model Poster {
   organizedBy String //should be enum
   link        String? //gogle form link 
   programId   String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   Program Program @relation(fields: [programId], references: [programId], onDelete: Cascade)
 }
 
 model EventHead {
-  headId  String @id @default(cuid())
-  userId  String
-  eventId String
+  headId    String   @id @default(cuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
@@ -102,11 +114,13 @@ model EventHead {
 }
 
 model Event {
-  eventId      String @id @default(cuid())
+  eventId      String   @id @default(cuid())
   programId    String
   name         String
   caption      String
   participants Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   EventHead   EventHead[]
   Participant Participant[]
@@ -116,9 +130,11 @@ model Event {
 }
 
 model Team {
-  teamId   String  @id @default(cuid())
-  teamName String? //remove this  
-  teamKey  String  @unique
+  teamId    String   @id @default(cuid())
+  teamName  String? //remove this  
+  teamKey   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   programId        String
   teamLeaderId     String
@@ -139,6 +155,8 @@ model Participant {
   eventId       String
   teamId        String
   registeredAt  DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   Team  Team  @relation(fields: [teamId], references: [teamId], onDelete: Cascade)
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)

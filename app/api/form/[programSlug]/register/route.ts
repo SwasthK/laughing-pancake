@@ -14,7 +14,6 @@ export async function POST(request: Request) {
   } = await request.json();
 
   const session = await auth();
-  const userEmail = session?.user?.email as string;
 
   const RequestCredSchema = z.object({
     eventId: z
@@ -79,8 +78,7 @@ export async function POST(request: Request) {
         status: HttpStatusCode.NotFound,
       });
     }
-    const userId = await getIdByEmail(userEmail);
-
+    const userId = session?.user?.id as string;
     const participant = await prisma.participant.create({
       data: {
         teamId: team.teamId,

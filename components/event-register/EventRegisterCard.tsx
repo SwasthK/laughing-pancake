@@ -27,6 +27,7 @@ import { FormattedEvent } from "@/types";
 import { FetchResponse } from "@/lib/fetcher";
 import { KeyedMutator } from "swr";
 import axios from "axios";
+import { ApiError, ApiResponse } from "@/lib/response";
 export default function EventRegisterCard({
   mutate,
   eventId,
@@ -54,15 +55,18 @@ export default function EventRegisterCard({
   const register = async () => {
     setLoader(true);
     try {
-      const response = await axios.post(`/api/form/${programSlug}/register`, {
-        eventId,
-        teamKey,
-      });
+      const response = await axios.post<ApiResponse<any>>(
+        `/api/form/${programSlug}/register`,
+        {
+          eventId,
+          teamKey,
+        }
+      );
       mutate();
 
       toast.success(response.data.message);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (axios.isAxiosError<ApiError>(error) && error.response) {
         toast.error(error.response.data.error);
       } else {
         toast.error("An unexpected error occurred.");
@@ -76,14 +80,17 @@ export default function EventRegisterCard({
   const unregister = async () => {
     setLoader(true);
     try {
-      const response = await axios.post(`/api/form/${programSlug}/revoke`, {
-        eventId,
-        teamKey,
-      });
+      const response = await axios.post<ApiResponse<any>>(
+        `/api/form/${programSlug}/revoke`,
+        {
+          eventId,
+          teamKey,
+        }
+      );
       toast.success(response.data.message);
       mutate();
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (axios.isAxiosError<ApiError>(error) && error.response) {
         toast.error(error.response.data.error);
       } else {
         toast.error("An unexpected error occurred.");
@@ -147,7 +154,8 @@ export default function EventRegisterCard({
                 <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
                   <div className="flex flex-col">
                     <span className="font-medium">
-                      You will be registered as:
+                      You will be{" "}
+                      {userExist ? "unregisterd as" : "registered as"}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {useremail}
@@ -156,7 +164,7 @@ export default function EventRegisterCard({
                 </div>
                 {userExist ? (
                   <Button
-                    disabled={!loader}
+                    disabled={loader}
                     className="w-full"
                     onClick={unregister}
                   >
@@ -164,7 +172,7 @@ export default function EventRegisterCard({
                   </Button>
                 ) : (
                   <Button
-                    disabled={!loader}
+                    disabled={loader}
                     className="w-full"
                     onClick={register}
                   >

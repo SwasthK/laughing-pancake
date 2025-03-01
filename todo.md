@@ -1,5 +1,8 @@
 - [ ] if the user is already logged in dont let them log in again (creates a ununusual bug)
-- [ ] add count like event registeration form as 1/2 people instead of 2
 - [ ] work on team status later
-- [ ] use tanstack for queries
-- [ ] check every api end point if they can be only used with only session
+- [ ] need to change the database type to enum (optional)
+
+- [ ] need to implemnt the design of home page (route is ready for fetching event details see api/events for doc)
+- [ ] admin created events
+- [ ] tracking joined teams for compititors
+- [ ] team admin managing team members and team status

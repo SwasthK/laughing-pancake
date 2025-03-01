@@ -27,6 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
   pages: {
     error: "/auth/error",
+    signIn: "/login",
   },
 
   experimental: { enableWebAuthn: true },
@@ -51,14 +52,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (url.startsWith("/auth/error?error")) return url;
       return baseUrl;
     },
-    async jwt({ token }) {
-      token.picture = null;
-      token.name = null;
+
+    jwt: async ({ token, user, account }) => {
+      if (account && user) {
+        token.id = user.id;
+      }
       return token;
     },
-
-    async session({ session }) {
-      return session;
+    session: async ({ session, token }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+        },
+      };
     },
   },
 });
