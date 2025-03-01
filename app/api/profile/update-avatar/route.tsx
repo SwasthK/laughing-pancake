@@ -9,8 +9,9 @@ import { z } from "zod";
 
 export async function PUT(request: Request) {
   const body: { url: z.infer<typeof avatarUrlSchema> } = await request.json();
-  
+
   const session = await auth();
+  const userId = session?.user?.id as string;
 
   const { error } = zodHandler(body.url, avatarUrlSchema);
   if (error) {
@@ -24,8 +25,6 @@ export async function PUT(request: Request) {
       }
     );
   }
-
-  const userId = await getIdByEmail(session?.user?.email as string);
 
   try {
     const result = await prisma.user.update({

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Editor } from "../../editor/editor";
 import { ComboBox } from "../../shadcn/Combobox";
-import { FormHeaderProps, FormLabelProps, FormType } from "@/types";
+import { FormHeaderProps, FormLabelProps, FormType, userList } from "@/types";
 import React, { useEffect } from "react";
 import {
   Popover,
@@ -66,7 +66,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import axios from "axios";
+import { ApiError, ApiResponse } from "@/lib/response";
 
 export const FormHeader = ({ label, split, className }: FormHeaderProps) => {
   return (
@@ -89,7 +90,6 @@ export const Label = ({ label, htmlFor, className, error }: FormLabelProps) => {
     </label>
   );
 };
-
 
 export const CreateFormDateAndTimeBlock = ({ form }: { form: any }) => {
   return (
@@ -615,29 +615,26 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
         return;
       }
       setLoad(true);
+      //  API CALL -------------------->
+      const response = await axios.get<ApiResponse<userList[]>>("/api/heads", {
+        params: { query: e },
+      });
 
-      // API CALL -------------------->
-
-      // const response = await axios.get("/api/heads", {
-      //   params: { query: e },
-      // });
-      // if (response.data.length > 0) {
-      //    setFilteredHeads(response.data);
-      // } else {
-      //   setFilteredHeads([]);
-      // }
-
-      setTimeout(() => {
-        const data = headsData?.some((head) => head.roll.toString().includes(e))
-          ? headsData.filter((head) => head.roll.toString().includes(e))
-          : [];
-        setFilteredHeads(data);
-        setLoad(false);
-      }, 500);
+      if (response.data.data.length > 0) {
+        setFilteredHeads(response.data.data);
+      } else {
+        setFilteredHeads([]);
+      }
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError<ApiError>(error)) {
+        console.error(error.response?.data.error);
+        toast.error(error.response?.data.error);
+      } else {
+        console.error(error);
+        toast.error("fetch failed");
+      }
       setFilteredHeads([]);
-      toast.error("Failed to fetch data");
+    } finally {
       setLoad(false);
     }
   }, 800);
@@ -918,7 +915,7 @@ const EditEventheads = ({
 }) => {
   useEffect(() => {
     setHead(defaultValue || []);
-  });
+  }, []);
   return (
     <Popover>
       <PopoverTrigger asChild>

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   //user ID
   const session = await auth();
 
-  const userId = await getIdByEmail(session?.user?.email as string);
+  const userId = session?.user?.id as string;
 
   const requestBodySchema = z.object({
     programSlug: z.string(),
@@ -63,8 +63,9 @@ export async function POST(request: Request) {
         }
       );
     }
+
     return Response.json(
-      new ApiResponse("Team created successfully", team.teamKey),
+      new ApiResponse("Team created successfully", { teamKey: team.teamKey }),
       {
         status: HttpStatusCode.OK,
       }

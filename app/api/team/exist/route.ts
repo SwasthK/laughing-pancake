@@ -26,16 +26,16 @@ export async function POST(request: Request) {
       },
     });
     if (!team) {
-      return Response.json(
-        new ApiError("Team not found", { teamKey: body.teamKey }),
-        {
-          status: HttpStatusCode.NotFound,
-        }
-      );
+      return Response.json(new ApiError("Team not found", null), {
+        status: HttpStatusCode.NotFound,
+      });
     }
-    return Response.json(new ApiResponse("Team found", team.teamKey), {
-      status: HttpStatusCode.OK,
-    });
+    return Response.json(
+      new ApiResponse("Team found", { teamKey: team.teamKey }),
+      {
+        status: HttpStatusCode.OK,
+      }
+    );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return Response.json(

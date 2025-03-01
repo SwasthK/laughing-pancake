@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Dialog,
@@ -14,6 +14,8 @@ import { Tabs, TabsList, TabsContent, TabsTrigger } from "../ui/tabs";
 import Link from "next/link";
 import { toast } from "sonner";
 import axios from "axios";
+import { ApiError, ApiResponse } from "@/lib/response";
+import { useEffect, useRef } from "react";
 
 export default function RegisterButton({
   link,
@@ -23,25 +25,37 @@ export default function RegisterButton({
   programSlug: string;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const autoRegister = searchParams.get("autoregister");
+  const registerButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (autoRegister === "true" && registerButtonRef.current) {
+      registerButtonRef.current.click();
+    }
+  }, [autoRegister]); // Only re-run if autoRegister changes
 
   async function createTeam(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const teamName = (e.target as HTMLFormElement).teamName.value;
     try {
-      const res = await axios.post(`/api/team/create`, {
-        programSlug,
-        teamName,
-      });
-      if (!res.data.success) {
+      const res = await axios.post<ApiResponse<{ teamKey: string }>>(
+        `/api/team/create`,
+        {
+          programSlug,
+          teamName,
+        }
+      );
+      if (res.data.success) {
         toast.success("Team created successfully");
         const url = new URL(link);
-        url.searchParams.set("teamKey", res.data.data);
+        url.searchParams.set("teamKey", res.data.data.teamKey);
         router.push(url.toString());
       } else {
         toast.error("team is not created");
       }
     } catch (err) {
-      if (axios.isAxiosError(err)) {
+      if (axios.isAxiosError<ApiError>(err)) {
         toast.error(err?.response?.data.error);
       } else {
         toast.error("An error occurred");
@@ -53,18 +67,21 @@ export default function RegisterButton({
   async function joinTeam(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const res = await axios.post(`/api/team/exist`, {
-        teamKey: (e.target as HTMLFormElement).teamKey.value,
-      });
+      const res = await axios.post<ApiResponse<{ teamKey: string }>>(
+        `/api/team/exist`,
+        {
+          teamKey: (e.target as HTMLFormElement).teamKey.value,
+        }
+      );
       if (!res.data.success) {
         toast.error("Team not found");
         return;
       }
       const url = new URL(link);
-      url.searchParams.set("teamKey", res.data.data);
+      url.searchParams.set("teamKey", res.data.data.teamKey);
       router.push(url.toString());
     } catch (err) {
-      if (axios.isAxiosError(err)) {
+      if (axios.isAxiosError<ApiError>(err)) {
         toast.error(err?.response?.data.error);
       } else {
         toast.error("An error occurred");
@@ -76,14 +93,16 @@ export default function RegisterButton({
   return (
     <>
       {link && !link.includes("/events/form") ? (
-        <Button variant="outline" asChild>
+        <Button ref={registerButtonRef} variant="outline" asChild>
           <Link href={link}>Register</Link>
         </Button>
       ) : (
         <div className="w-full md:w-fit flex justify-end">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Register</Button>
+              <Button ref={registerButtonRef} variant="outline">
+                Register
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

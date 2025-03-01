@@ -8,8 +8,8 @@ import { Prisma } from "@prisma/client";
 export async function POST(request: Request) {
   //user ID
   const session = await auth();
+  const userId = session?.user?.id as string;
 
-  const userId = await getIdByEmail(session?.user?.email as string);
   const body: ProgramDeleteBody = await request.json();
   if (!body || !body.programSlug) {
     return Response.json(new ApiError("Program Slug is missing", null), {
