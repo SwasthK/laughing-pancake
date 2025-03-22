@@ -39,11 +39,13 @@ export enum FormType {
 }
 
 export enum OrganizedBy {
+  All = "all",
   BCA = "bca",
   BBA = "bba",
   BCom = "bcom",
   BSc = "bsc",
   BA = "ba",
+  BVoc = "bvoc",
 }
 
 export enum EventType {
@@ -80,6 +82,7 @@ export enum HttpStatusCode {
   GatewayTimeout = 504,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace PosterType {
   export type Title = string;
 
@@ -181,6 +184,7 @@ export interface EventList {
 }
 
 export enum queryType {
+  all = "all",
   trending = "trending",
   newest = "newest",
   upcoming = "upcoming",

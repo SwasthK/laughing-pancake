@@ -9,26 +9,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { queryType } from "@/types";
 
 export function Select({
   items,
-  sortIndex,
-  setSortIndex,
+  filter,
+  setFilter,
 }: {
-  label: string;
-  items: { value: string; label: string }[];
-  sortIndex: number;
-  setSortIndex: React.Dispatch<React.SetStateAction<number>>;
+  items: { value: queryType; label: string }[];
+  filter: queryType;
+  setFilter: React.Dispatch<React.SetStateAction<queryType>>;
 }) {
   // const defaultValue = items[sortIndex]?.value || "";
 
   return (
     <SelectComponent
-      value={items[sortIndex].value}
-      onValueChange={(value) => {
-        const index = items.findIndex((item) => item.value === value);
-        if (index !== -1) setSortIndex(index);
-        else setSortIndex(0);
+      value={filter}
+      onValueChange={(value: queryType) => {
+        setFilter(value);
       }}
     >
       <SelectTrigger className="w-fit">

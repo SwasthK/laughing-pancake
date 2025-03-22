@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Select } from "./shadcn/Select";
-import { toast } from "sonner";
 import {
   Command,
   CommandEmpty,
@@ -19,96 +18,77 @@ import {
 import { Button } from "./ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FilterContext } from "@/app/context/FilterProvider";
+import { OrganizedBy, queryType } from "@/types";
 
 const sortCourses = [
   {
-    value: "all",
+    value: OrganizedBy.All,
     label: "All (default)",
   },
   {
-    value: "bca",
+    value: OrganizedBy.BCA,
     label: "BCA",
   },
   {
-    value: "bcom",
+    value: OrganizedBy.BCom,
     label: "BCOM",
   },
   {
-    value: "bba",
+    value: OrganizedBy.BBA,
     label: "BBA",
   },
   {
-    value: "bsc",
+    value: OrganizedBy.BSc,
     label: "BSC",
   },
   {
-    value: "bvoc",
+    value: OrganizedBy.BVoc,
     label: "BVOC",
   },
 ];
 
 const sortEvents = [
   {
-    value: "all",
+    value: queryType.all,
     label: "All",
   },
   {
-    value: "trending",
+    value: queryType.trending,
     label: "Trending",
   },
   {
-    value: "latest",
-    label: "Latest",
-  },
-  {
-    value: "oldest",
+    value: queryType.oldest,
     label: "Oldest",
   },
   {
-    value: "upcoming",
+    value: queryType.upcoming,
     label: "Upcoming",
   },
 ];
 
 export function FilterBar() {
-  const [sortEventsIndex, setSortEventsIndex] = useState(0);
-  const [sortCoursesIndex, setSortCoursesIndex] = useState(0);
+  const { setFilter, setDeparment, filter, department } =
+    useContext(FilterContext)!;
 
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    toast("Sorting changed", {
-      description: (
-        <code>
-          sort by : {sortEvents[sortEventsIndex].value}
-          <br />
-          course : {sortCourses[sortCoursesIndex].value}
-        </code>
-      ),
-    });
-  }, [sortEventsIndex, sortCoursesIndex]);
 
   return (
     <>
       <div className="flex text-gray-700 items-center cursor-pointer flex-wrap gap-3 font-normal px-0">
-        {sortEvents.map((item, index: number) => (
+        {sortEvents.map((item) => (
           <div
-            onClick={() => setSortEventsIndex(index)}
+            onClick={() => setFilter(item.value)}
             key={item.value}
             className={`${
-              index == sortEventsIndex ? "bg-black text-white" : "bg-background"
+              item.value == filter ? "bg-black text-white" : "bg-background"
             } border border-input hidden text-sm lg:block rounded-full md:px-4 py-1.5 transition-colors duration-500 ease-in`}
           >
             <p>{item.label}</p>
           </div>
         ))}
         <div className="block lg:hidden">
-          <Select
-            items={sortEvents}
-            sortIndex={sortEventsIndex}
-            setSortIndex={setSortEventsIndex}
-            label="filter"
-          />
+          <Select items={sortEvents} filter={filter} setFilter={setFilter} />
         </div>
       </div>
 
@@ -121,7 +101,7 @@ export function FilterBar() {
               aria-expanded={open}
               className={`w-fit justify-between lg:rounded-md lg:px-4 lg:py-1.5 lg:h-fit h-10 px-4 py-2`}
             >
-              {sortCoursesIndex === 0 ? (
+              {!department ? (
                 <>
                   <p className="hidden md:block">{`Select department...`}</p>
                   <p className="block md:hidden capitalize">Select</p>
@@ -129,7 +109,9 @@ export function FilterBar() {
               ) : (
                 <>
                   <p>
-                    {sortCourses[sortCoursesIndex].label}
+                    {sortCourses
+                      .filter((item) => item.value == department)
+                      .map((item) => item.label)}
                   </p>
                 </>
               )}
@@ -143,14 +125,12 @@ export function FilterBar() {
               <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup>
-                  {sortCourses.map((item, index) => (
+                  {sortCourses.map((item) => (
                     <CommandItem
                       key={item.value}
                       value={item.value}
                       onSelect={() => {
-                        setSortCoursesIndex(
-                          index === sortCoursesIndex ? 0 : index
-                        );
+                        setDeparment(item.value);
                         setOpen(false);
                       }}
                     >
@@ -158,9 +138,9 @@ export function FilterBar() {
                       <Check
                         className={cn(
                           "ml-auto",
-                          index === sortCoursesIndex
+                          item.value === department
                             ? "opacity-100"
-                            : "opacity-0"
+                            : "opacity-0",
                         )}
                       />
                     </CommandItem>
