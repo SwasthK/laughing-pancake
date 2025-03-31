@@ -3,7 +3,8 @@ import { fetcher, FetchError, FetchResponse } from "@/lib/fetcher";
 import type { JoinedTeam } from "@/types";
 import useSWR from "swr";
 import MyTeamCard from "./my-team-card";
-import { Users, Loader2 } from "lucide-react";
+import { Users } from "lucide-react";
+import { Loader } from "../Loader/loader-one";
 
 export default function MyTeam() {
   const { data, mutate, isLoading, error } = useSWR<
@@ -22,7 +23,7 @@ export default function MyTeam() {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+          <Loader message="Loading your teams" />
         </div>
       ) : error ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
@@ -35,7 +36,7 @@ export default function MyTeam() {
             No teams yet
           </h3>
           <p className="text-gray-600 mb-4">
-            You haven't created or joined any teams yet.
+            You haven&apos;t created or joined any teams yet.
           </p>
         </div>
       ) : (

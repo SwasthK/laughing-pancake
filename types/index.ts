@@ -205,3 +205,15 @@ export interface JoinedTeam {
     image: string | undefined;
   };
 }
+
+export interface MyProgram {
+  programId: string;
+  programSlug: string;
+  Poster: {
+    title: string;
+    image: string;
+    date: Date;
+    eventType: string;
+    organizedBy: string;
+  } | null;
+}

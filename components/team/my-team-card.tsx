@@ -351,8 +351,8 @@ export default function MyTeamCard({
                 Delete Team
               </DialogTitle>
               <DialogDescription className="text-gray-600 mt-1">
-                Are you sure you want to delete the team "{teamName}"? This
-                action cannot be undone.
+                Are you sure you want to delete the team &quot;{teamName}&quot;?
+                This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="p-4 flex justify-end gap-3">

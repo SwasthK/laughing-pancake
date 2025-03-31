@@ -3,7 +3,8 @@ import { fetcher, FetchError, FetchResponse } from "@/lib/fetcher";
 import type { JoinedTeam } from "@/types";
 import useSWR from "swr";
 import JoinedTeamCard from "./joined-team-card";
-import { UsersRound, Loader2 } from "lucide-react";
+import { UsersRound } from "lucide-react";
+import { Loader } from "../Loader/loader-one";
 
 export default function JoinedTeams() {
   const { data, isLoading, error } = useSWR<
@@ -24,7 +25,7 @@ export default function JoinedTeams() {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+          <Loader message="Loading your teams" />
         </div>
       ) : error ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
