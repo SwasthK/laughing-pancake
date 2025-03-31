@@ -2,7 +2,7 @@
 - [ ] work on team status later
 - [ ] need to change the database type to enum (optional)
 
-- [ ] need to implemnt the design of home page (route is ready for fetching event details see api/events for doc)
-- [ ] admin created events
-- [ ] tracking joined teams for compititors
-- [ ] team admin managing team members and team status
+- [x] need to implemnt the design of home page (route is ready for fetching event details see api/events for doc)
+- [ ] tracking joined program/teams for compititors (make it single page[view and delete(if admin)])
+- [ ] admin created programs [delete option]
+- [ ] event head and thier participants

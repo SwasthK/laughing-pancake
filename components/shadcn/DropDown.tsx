@@ -7,6 +7,7 @@ import {
   Settings,
   TrophyIcon,
   User,
+  Users,
 } from "lucide-react";
 
 import {
@@ -54,6 +55,10 @@ export function DropdownMenu() {
           <DropdownMenuItem to="/events">
             <CalendarDays />
             <span>My events</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem to="/program/my-teams">
+            <Users />
+            <span>My Teams</span>
           </DropdownMenuItem>
           <DropdownMenuItem to="/leaderboard">
             <TrophyIcon />
