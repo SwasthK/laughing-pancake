@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
@@ -25,7 +24,7 @@ export async function POST(request: Request) {
       new ApiError("Invalid request body or missing team Key"),
       {
         status: HttpStatusCode.BadRequest,
-      }
+      },
     );
   }
 

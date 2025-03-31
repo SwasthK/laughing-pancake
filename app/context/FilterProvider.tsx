@@ -12,7 +12,7 @@ interface FilterContextType {
 }
 export const FilterContext = createContext<FilterContextType | null>(null);
 export function FilterProvider({ children }: { children: React.ReactNode }) {
-  const [filter, setFilter] = useState<queryType>(queryType.upcoming);
+  const [filter, setFilter] = useState<queryType>(queryType.all);
   const [department, setDeparment] = useState<OrganizedBy>(OrganizedBy.All);
   const [page, setPage] = useState<number>(1);
   return (

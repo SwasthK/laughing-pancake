@@ -34,12 +34,14 @@ export function EventCard({
         <p className="text-secondary-light text-sm truncate">{description}</p>
         <div className="flex justify-between items-center text-sm">
           <Tooltip content="View event details">
-            <Link href={`/poster/${programSlug}`}>View</Link>
+            <Link href={`/poster/${programSlug}?autoregister=true`}>
+              Register
+            </Link>
           </Tooltip>
           <div className="w-fit p-1 rounded-md cursor-pointer">
             <Tooltip content="Register now">
               <Link
-                href={`/poster/${programSlug}?autoregister=true`}
+                href={`/poster/${programSlug}`}
                 target="_blank"
                 className="bg-transparent block px-0"
               >

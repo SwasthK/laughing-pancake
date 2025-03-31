@@ -190,3 +190,18 @@ export enum queryType {
   upcoming = "upcoming",
   oldest = "oldest",
 }
+
+export interface JoinedTeam {
+  teamId: string;
+  teamName: string | null;
+  teamKey: string;
+  teamLeaderId: string;
+  program: {
+    programSlug: string;
+    title: string | undefined;
+    eventType: string | undefined;
+    organizedBy: string | undefined;
+    description: string | undefined;
+    image: string | undefined;
+  };
+}
