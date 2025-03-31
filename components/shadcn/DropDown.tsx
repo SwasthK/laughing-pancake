@@ -3,6 +3,7 @@ import {
   Github,
   LifeBuoy,
   LogOut,
+  PartyPopper,
   Plus,
   Settings,
   TrophyIcon,
@@ -55,6 +56,10 @@ export function DropdownMenu() {
           <DropdownMenuItem to="/events">
             <CalendarDays />
             <span>My events</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem to="/program/my-programs">
+            <PartyPopper />
+            <span>My Programs</span>
           </DropdownMenuItem>
           <DropdownMenuItem to="/program/my-teams">
             <Users />

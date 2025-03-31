@@ -12,11 +12,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.json(
         new ApiError(
           "Unauthorized",
-          "You are not authorized to access this resource"
+          "You are not authorized to access this resource",
         ),
         {
           status: HttpStatusCode.Unauthorized,
-        }
+        },
       );
     }
     return NextResponse.redirect(new URL("/signin", request.url));
@@ -30,8 +30,10 @@ export const config = {
     "/api/get-user/:path*",
     "/api/poster/create",
     "/api/poster/delete",
+    "/api/poster/my-programs",
     "/profile/:path*",
     "/events/create",
     "/events/form/:path*",
+    "/program/:path*",
   ],
 };
