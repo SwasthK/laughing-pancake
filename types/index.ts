@@ -217,3 +217,26 @@ export interface MyProgram {
     organizedBy: string;
   } | null;
 }
+
+export interface HeadsEvent {
+  eventName: string;
+  eventId: string;
+  eventCaption: string;
+  programSlug: string;
+  programImage: string | undefined;
+  programTitle: string | undefined;
+  programOrganizedBy: string | undefined;
+  ProgrameType: string | undefined;
+}
+
+export interface TeamForEvent {
+  teamId: string;
+  teamKey: string;
+  Participant: {
+    User: {
+      name: string | null;
+      email: string;
+    };
+    userId: string;
+  }[];
+}

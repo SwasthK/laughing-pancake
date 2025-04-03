@@ -5,7 +5,6 @@ import { HttpStatusCode } from "./types";
 import { ApiError } from "./lib/response";
 
 export async function middleware(request: NextRequest) {
-  console.log("request url", request.url);
   const user = await auth();
   if (!user) {
     if (request.url.includes("api")) {
@@ -35,5 +34,7 @@ export const config = {
     "/events/create",
     "/events/form/:path*",
     "/program/:path*",
+    "/api/heads/my-programs/:path*",
+    "/api/heads/my-participants/:path*",
   ],
 };

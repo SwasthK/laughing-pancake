@@ -53,10 +53,7 @@ export function DropdownMenu() {
             <Plus />
             <span>Create event</span>
           </DropdownMenuItem>
-          <DropdownMenuItem to="/events">
-            <CalendarDays />
-            <span>My events</span>
-          </DropdownMenuItem>
+
           <DropdownMenuItem to="/program/my-programs">
             <PartyPopper />
             <span>My Programs</span>
@@ -64,6 +61,10 @@ export function DropdownMenu() {
           <DropdownMenuItem to="/program/my-teams">
             <Users />
             <span>My Teams</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem to="/program/my-heads">
+            <CalendarDays />
+            <span>My events</span>
           </DropdownMenuItem>
           <DropdownMenuItem to="/leaderboard">
             <TrophyIcon />

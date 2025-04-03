@@ -1,6 +1,6 @@
 "use client";
 
-import MyProgramCard from "@/components/program/my-program/MyProgramCard";
+import MyProgramCard from "@/components/program/my-program/my-program-card";
 import { fetcher, FetchError, FetchResponse } from "@/lib/fetcher";
 import { MyProgram } from "@/types";
 import useSWR from "swr";
