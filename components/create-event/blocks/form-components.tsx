@@ -68,6 +68,7 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { ApiError, ApiResponse } from "@/lib/response";
+import { eventTypes } from "@/lib/data";
 
 export const FormHeader = ({ label, split, className }: FormHeaderProps) => {
   return (
@@ -215,16 +216,6 @@ const courses = [
     value: "ba",
     label: "Bachuleor of Arts [BA]",
   },
-];
-
-const eventTypes = [
-  { value: "intercollegiate", label: "Intercollegiate" },
-  { value: "interdepartment", label: "Interdepartment" },
-  { value: "seminar", label: "Seminar" },
-  { value: "workshop", label: "Workshop" },
-  { value: "hackathon", label: "Hackathon" },
-  { value: "conference", label: "Conference" },
-  { value: "meetup", label: "Meetup" },
 ];
 
 export const CreateFormVenueBlock = ({ form }: { form: any }) => {

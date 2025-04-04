@@ -1,4 +1,4 @@
-import { EventsDataType, HotEventsData } from "@/types";
+import { EventsDataType, typeOfEventTypes, HotEventsData } from "@/types";
 
 export const hoteventsData: HotEventsData[] = [
     {
@@ -204,3 +204,13 @@ export const posterData: any = {
     link: "",
     formType: "NONE"
 };
+
+export const eventTypes: typeOfEventTypes[] = [
+    { value: "intercollegiate", label: "Intercollegiate" },
+    { value: "interdepartment", label: "Interdepartment" },
+    { value: "seminar", label: "Seminar" },
+    { value: "workshop", label: "Workshop" },
+    { value: "hackathon", label: "Hackathon" },
+    { value: "conference", label: "Conference" },
+    { value: "meetup", label: "Meetup" },
+];

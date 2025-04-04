@@ -55,7 +55,7 @@ export const SearchCommandPallete = ({
               <p className="text-center font-mono">No results found.</p>
             </CommandEmpty>
             <CommandGroup heading="Suggestions" className="font-mono">
-              <CommandItem to="/profile">
+              <CommandItem to="/profile/me">
                 <CommandItemIconBox icon={<User />} label="Profile" />
               </CommandItem>
               <CommandItem to="/events/create">

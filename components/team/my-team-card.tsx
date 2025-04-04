@@ -191,12 +191,7 @@ import axios from "axios";
 import { ApiError, ApiResponse } from "@/lib/response";
 import { toast } from "sonner";
 import { useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { Tooltip } from "../Tooltip";
 
 export default function MyTeamCard({
   teamName,
@@ -253,8 +248,8 @@ export default function MyTeamCard({
   };
 
   return (
-    <Card className="overflow-hidden bg-white flex flex-col h-full transition-all duration-300 hover:shadow-xl border border-gray-200 rounded-lg">
-      <div className="relative w-full h-48">
+    <Card className="p-2 overflow-hidden bg-white flex flex-col h-full transition-all duration-300 hover:shadow-xl border border-gray-200 rounded-lg">
+      <div className="relative w-full overflow-hidden h-48 rounded-md">
         <Image
           src={imageUrl}
           alt={`${teamName} event image`}
@@ -269,27 +264,20 @@ export default function MyTeamCard({
           </Badge>
         </div>
         <div className="absolute top-3 right-3">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={copyTeamKey}
-                  size="sm"
-                  variant="outline"
-                  className="bg-white/90 hover:bg-white border-0 h-8 w-8 p-0 rounded-full"
-                >
-                  {copied ? (
-                    <Check className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <Copy className="h-4 w-4 text-gray-700" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Copy team key to share</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip content="Copy team key to share">
+            <Button
+              onClick={copyTeamKey}
+              size="sm"
+              variant="outline"
+              className="bg-white/90 hover:bg-white border-0 h-8 w-8 p-0 rounded-full"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-600" />
+              ) : (
+                <Copy className="h-4 w-4 text-gray-700" />
+              )}
+            </Button>
+          </Tooltip>
         </div>
       </div>
 
@@ -304,17 +292,25 @@ export default function MyTeamCard({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="py-1 flex-grow">
+      <CardContent className="py-1  flex w-full justify-between items-center">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <UserIcon className="h-4 w-4" />
-          <span className="font-medium">{organizedBy}</span>
+          <span className="font-medium">{organizedBy.toLocaleUpperCase()}</span>
         </div>
+        <Button
+          variant="outline"
+          className=" border-gray-300 hover:bg-gray-100 text-black "
+          onClick={() => router.push(`/poster/${programSlug}`)}
+        >
+          <Info className="h-4 w-4 mr-2" />
+          Details
+        </Button>
       </CardContent>
 
-      <CardFooter className="pt-3 flex gap-2 border-t border-gray-100 p-4">
+      <CardFooter className="pt-3 flex justify-between items-center gap-2 border-t border-gray-100 p-0 sm:px-4 py-4">
         <Button
           variant="default"
-          className="flex-1 bg-black hover:bg-gray-800 text-white"
+          className=" bg-black hover:bg-gray-800 text-white m-0"
           onClick={() =>
             router.push(`/events/form/${programSlug}?teamKey=${teamKey}`)
           }
@@ -323,20 +319,11 @@ export default function MyTeamCard({
           Go To Form
         </Button>
 
-        <Button
-          variant="outline"
-          className="flex-1 border-gray-300 hover:bg-gray-100 text-black"
-          onClick={() => router.push(`/poster/${programSlug}`)}
-        >
-          <Info className="h-4 w-4 mr-2" />
-          Details
-        </Button>
-
         <Dialog>
           <DialogTrigger asChild>
-            <div className="flex-1 text-white">
+            <div className=" text-white">
               <Button
-                className="w-full border-red-300 bg-red-500"
+                className="w-fit border-red-300 bg-red-500"
                 disabled={loader}
                 variant="outline"
               >

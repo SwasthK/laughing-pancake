@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { EventCard } from "@/components/EventCard";
 import { queryType, type EventList } from "@/types";
 import { Fragment } from "react";
@@ -7,16 +7,18 @@ import { fetcher, FetchError, FetchResponse } from "@/lib/fetcher";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { FilterContext } from "@/app/context/FilterProvider";
-import { throttle } from "lodash";
 import { EventCardSkeleton } from "./event-card-skeleton";
 
 export default function EventListSection() {
   const { filter, department, page, setPage } = useContext(FilterContext)!;
   const [eventList, setEventList] = useState<EventList[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingTriggerRef = useRef<HTMLDivElement | null>(null);
   const limit = 9;
 
-  const { data, isLoading, error } = useSWR<
+  const { data, isLoading, error, mutate } = useSWR<
     FetchResponse<EventList[]>,
     FetchError
   >(
@@ -26,6 +28,12 @@ export default function EventListSection() {
       shouldRetryOnError: false,
       revalidateOnFocus: false,
       dedupingInterval: 1000,
+      onLoadingSlow: () => {
+        setIsLoadingMore(true);
+      },
+      onSuccess: () => {
+        setIsLoadingMore(false);
+      }
     },
   );
 
@@ -48,58 +56,95 @@ export default function EventListSection() {
       if (page === 2 && filter === queryType.trending) setHasMore(false);
     }
   }, [data, page, filter]);
+
   useEffect(() => {
+    setEventList([]); // Clear existing events when filter/department changes
     setHasMore(() => true);
     setPage(() => 1);
-  }, [department, filter, setPage]);
+    mutate(); // Refetch with new parameters
+  }, [department, filter, setPage, mutate]);
 
   useEffect(() => {
     if (error) {
       toast.error("Failed to fetch events");
+      setIsLoadingMore(false);
     }
   }, [error]);
 
-  useEffect(() => {}, [eventList]);
-  const handleScroll = useCallback(() => {
-    const throttledCheck = throttle(() => {
-      const scrollBottom =
-        window.innerHeight + document.documentElement.scrollTop;
-      const threshold = document.documentElement.offsetHeight - 100;
+  // Instagram-style loading trigger
+  const loadMoreObserver = useCallback(() => {
+    if (observerRef.current) observerRef.current.disconnect();
 
-      if (scrollBottom >= threshold && !isLoading && hasMore) {
-        setPage((prev) => prev + 1);
-      }
-    }, 300);
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+          setIsLoadingMore(true);
+          // Small delay to ensure skeleton loaders are visible before the fetch completes
+          setTimeout(() => {
+            setPage((prev) => prev + 1);
+          }, 300);
+        }
+      },
+      { rootMargin: "200px 0px" } // Start loading before the element is fully visible
+    );
 
-    return throttledCheck;
-  }, [isLoading, hasMore, setPage])();
+    if (loadingTriggerRef.current) {
+      observerRef.current.observe(loadingTriggerRef.current);
+    }
+  }, [hasMore, isLoading, isLoadingMore, setPage]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+    loadMoreObserver();
+    
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [loadMoreObserver, eventList]);
 
-  if (error) {
+  if (error && eventList.length === 0) {
     return (
-      <div className="text-red-500">
+      <div className="text-red-500 text-center py-8">
         Error loading events. Please try again.
       </div>
     );
   }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-6">
+      {/* Render existing event cards */}
       {eventList.map((event: EventList) => (
         <Fragment key={event.programSlug}>
           <EventCard {...event} />
         </Fragment>
       ))}
 
-      {isLoading && (
+      {/* Show loading skeletons for initial load */}
+      {isLoading && eventList.length === 0 && (
         <>
           {Array.from({ length: 6 }).map((_, index) => (
-            <EventCardSkeleton key={index} />
+            <EventCardSkeleton key={`initial-${index}`} />
           ))}
         </>
+      )}
+
+      {/* Show loading skeletons when scrolling for more */}
+      {(isLoadingMore || (isLoading && eventList.length > 0)) && hasMore && (
+        <>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <EventCardSkeleton key={`more-${index}`} />
+          ))}
+        </>
+      )}
+
+      {/* Invisible loading trigger element */}
+      {hasMore && !isLoading && (
+        <div 
+          ref={loadingTriggerRef}
+          className="col-span-full h-20 w-full -mb-20"
+          aria-hidden="true"
+        />
       )}
     </div>
   );

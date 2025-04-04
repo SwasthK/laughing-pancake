@@ -1,151 +1,163 @@
 "use client";
 
-import { onError } from "@/components/create-event/form-methods";
-import { ProfileImage } from "@/components/profile/profile-image";
-import { StatBox } from "@/components/profile/statbox";
 import { Button } from "@/components/ui/button";
-import { Form, FormField } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { profileUpdateSchema } from "@/zod";
-import { zodHandler } from "@/zod/resolve";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { fetcher, FetchError, FetchResponse } from "@/lib/fetcher";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import { Fragment, useEffect, useState } from "react";
+import useSWR from "swr";
+import React from "react";
+import { Calendar, MapPin, Phone, User, Link2, FileText } from "lucide-react";
+import { ProfileProgramCardProps } from "@/types";
+import { ProfileProgramCard } from "@/components/profile-program-card/profile-program-card";
 
-export default function UserProfilePrivate() {
-  const form = useForm<z.infer<typeof profileUpdateSchema>>();
+export default function Page() {
+  const { username } = useParams();
+  const session = useSession();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-  const [disabled, setDisabled] = useState(true);
+  if (!username?.includes("%40")) {
+    router.push("/not-found");
+    return null;
+  }
+
+  const normalizedUsername =
+    typeof username === "string"
+      ? username.replace(/%40/g, "@").split("@")[0]
+      : Array.isArray(username)
+      ? username[0]
+      : username;
 
   useEffect(() => {
-    const subscription = form.watch((val) => {
-      setDisabled(!(val.bio || val.username)); 
-    });
-  
-    return () => subscription.unsubscribe(); 
-  }, [form]);
-  
-  async function onSubmit(formdata: z.infer<typeof profileUpdateSchema>) {
-    const updatedData: Record<string, string> = {};
-    Object.entries(formdata).forEach(([key, value]) => {
-      if (value && value.trim() !== "") {
-        updatedData[key] = value;
+    if (session.status === "loading") return;
+
+    if (session.status === "authenticated" && session.data?.user?.email) {
+      const email = session.data.user.email;
+      const userEmailName = email.split("@")[0];
+
+      if (normalizedUsername === userEmailName) {
+        router.push("/profile/me");
+      } else {
+        setLoading(false);
       }
-    });
+    } else {
+      router.push("/signin");
+    }
+  }, [session, normalizedUsername, router]);
 
-    const { error } = zodHandler(updatedData, profileUpdateSchema);
-    if (error) return toast.error(error);
+  const {
+    data,
+    error,
+    isLoading: isDataLoading,
+  } = useSWR<
+    FetchResponse<{
+      name: string;
+      bio: string;
+      image: string;
+      email: string;
+      program: {
+        Poster: ProfileProgramCardProps;
+      }[];
+    }>,
+    FetchError
+  >(
+    session.status === "authenticated" && !loading
+      ? `/api/profile/get-public?email=${normalizedUsername}@gmail.com`
+      : null,
+    fetcher,
+    {
+      shouldRetryOnError: false,
+      revalidateOnFocus: false,
+      dedupingInterval: 1000,
+    }
+  );
 
-    const res = await fetch("/api/profile/update-meta-data", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedData),
-    });
+  if (session.status === "loading") {
+    return <div>Loading...</div>;
+  }
 
-    toast.promise(
-      res.json().then((data) => {
-        if (!data.success) {
-          throw new Error(data.error);
-        }
-        return data;
-      }),
-      {
-        loading: "Wait a moment...",
-        success: (data) => data.message,
-        error: (err) => err.message,
-      }
+  // Handle error state
+  if (error) {
+    return (
+      <div className="w-full h-screen flex-col gap-2 flex items-center justify-center text-red-500">
+        <div className="p-4 sm:p-32 flex-col gap-6 flex items-center justify-center bg-white rounded-lg">
+          <p className="text-2xl sm:text-4xl">Error</p>
+          <p className="text-sm font-mono text-center">
+            {"User Not Found"} <br /> Please check the username and try again.
+          </p>
+          <Button onClick={() => router.push("/profile/me")}>
+            Go to my profile
+          </Button>
+        </div>
+      </div>
     );
-    form.setValue("username", "");
-    form.setValue("bio", "");
   }
 
   return (
-    <div className="lg:py-16 pb-10">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit, onError)}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-3 relative"
-        >
-          <div className="flex gap-10 flex-col lg:h-[calc(100vh-250px)] justify-center  bg-[#DADADA] rounded-xl px-8 py-20 lg:px-6 xl:p-20 ">
-            <p className="text-xl font-semibold absolute top-4 left-7">
-              About <span className="text-[#666666]">you</span>
-            </p>
-            <div className="flex gap-8 lg:flex-row items-center">
-              <ProfileImage></ProfileImage>
-              <div className="flex flex-col gap-1 overflow-hidden truncate">
-                <p className="text-3xl font-semibold">RockyJon</p>
-                <p className="text-sm">rockjon@gmail.com</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="font-semibold font-trebuchet text-sm">
-                Something about me
-              </p>
-              <p className="text-sm font-mono">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Reprehenderit earum voluptate architecto?
-              </p>
-            </div>
-            <div className="flex gap-4 px-4 justify-center items-center">
-              <StatBox value={11} label="Posts" />
-              <StatBox value={"BCA"} label="Dept" />
-              <StatBox value={"12"} label="Posts" />
-            </div>
-          </div>
-
-          <div className="flex relative gap-10 flex-col lg:h-[calc(100vh-250px)] justify-center  bg-[#DADADA] rounded-xl px-8 py-20 lg:px-6  md:p-20 ">
-            <p className="text-xl font-semibold absolute top-4 left-7">
-              Update your <span className="text-[#666666]">profile</span>
-            </p>
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <p className="text-sm">Username</p>
-                <div className="flex flex-col xl:flex-row w-full max-w-sm items-start xl:items-center gap-2">
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <>
-                        <Input
-                          {...field}
-                          type="text"
-                          placeholder="RockyJon"
-                          className="w-full"
-                        />
-                      </>
-                    )}
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">User Profile</h1>
+      {isDataLoading ? (
+        <p>Loading profile data...</p>
+      ) : (
+        <>
+          <div className="">
+            {/* User profile header */}
+            <div className="mb-4 rounded-lg flex flex-col md:flex-row justify-start md:justify-center bg-[#DADADA] px-8 gap-8 md:items-center p-6 ">
+              <div className="relative aspect-square h-32 rounded-md md:rounded-full">
+                {data?.data?.image ? (
+                  <Image
+                    src={data.data.image}
+                    fill
+                    alt={`${data?.data?.name || "User"}'s avatar`}
+                    className="absolute object-cover rounded-md md:rounded-full"
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <p className="text-sm">Bio</p>
-                  <div className="flex flex-col xl:flex-row w-full max-w-sm items-start xl:items-center gap-2">
-                    <FormField
-                      control={form.control}
-                      name="bio"
-                      render={({ field }) => (
-                        <Textarea
-                          {...field}
-                          className="resize-none font-mono text-sm"
-                          placeholder="Update your bio here"
-                        />
-                      )}
-                    />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center text-white text-3xl font-bold">
+                    {normalizedUsername.charAt(0).toUpperCase()}
                   </div>
-                </div>
-                <div className="flex mt-8 flex-col xl:flex-row w-full max-w-sm items-start xl:items-center gap-2">
-                  <Button type="submit" className="w-full" disabled={disabled}>
-                    Update
-                  </Button>
+                )}
+              </div>
+              <div className="flex flex-grow  flex-col px-8 py-2 items-start justify-start ">
+                <p className="text-3xl font-semibold mb-1">{data?.data.name}</p>
+                <p className="text-sm mb-3">{data?.data.email}</p>
+                <div className="p-6  rounded-md">
+                  <p className="font-semibold">About Me</p>
+                  <p>{data?.data.bio}</p>
                 </div>
               </div>
             </div>
           </div>
-        </form>
-      </Form>
+          {data?.data.program && (
+            <>
+              <div>
+                <p className="text-2xl font-semibold mb-4">
+                  Programs by {data?.data.name}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 lg:grid-cols-2 xl:grid-cols-3 gap-x-3">
+                {data?.data.program.map(
+                  (program: { Poster: ProfileProgramCardProps }) => (
+                    <Fragment key={program.Poster.title}>
+                      <ProfileProgramCard
+                        title={program.Poster.title}
+                        brochure={program.Poster.brochure}
+                        link={program.Poster.link}
+                        eventType={program.Poster.eventType}
+                        image={program.Poster.image}
+                        date={program.Poster.date}
+                      />
+                    </Fragment>
+                  )
+                )}
+              </div>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }
+
+

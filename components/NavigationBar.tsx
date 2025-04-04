@@ -22,7 +22,7 @@ const NavItems = [
 
 export function NavigationBar() {
   return (
-    <div className="sticky top-[0px] z-50 py-5  rounded-t-none border-[rgba(255,255,255,0.125)] border mt-3 lg:px-6 flex text-white justify-between backdrop-blur-sm backdrop-saturate-0  gap-2 flex-wrap items-center w-full rounded-lg ">
+    <div className="sticky top-[0px]  z-50 py-5  rounded-t-none border-[rgba(255,255,255,0.125)] border mt-3 lg:px-6 flex text-white justify-between backdrop-blur-sm backdrop-saturate-0  gap-2 flex-wrap items-center w-full rounded-lg ">
       <Link
         href={"/"}
         className="font-trebuchet text-3xl font-extrabold  text-black"
@@ -50,13 +50,9 @@ export function NavigationBar() {
         </div>
       </div>
       <div className="flex gap-3 items-center">
-        <CustomLink
-          className="bg-[#262728] h-10 lg:hidden flex justify-center items-center gap-2 text-white rounded-md  py-1.5"
-          href={`/profile`}
-        >
-          <IconSearch className="h-[1.2rem] w-[1.2rem]"></IconSearch>
-          <p className="text-sm ">Ctrl + K</p>
-        </CustomLink>
+        <SearchCommandPallete className="bg-[#262728] h-10">
+          <IconSearch className=""></IconSearch>
+        </SearchCommandPallete>
         <ThemeToggle></ThemeToggle>
         <DropdownMenu />
       </div>

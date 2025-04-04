@@ -179,8 +179,9 @@ export interface EventList {
   programSlug: string;
   title: string;
   image: string;
-  description: string;
+  eventType?: string;
   organizedBy: string;
+  description?: string;
 }
 
 export enum queryType {
@@ -240,3 +241,17 @@ export interface TeamForEvent {
     userId: string;
   }[];
 }
+
+export type typeOfEventTypes={
+  label: string;
+  value: string;
+}
+
+export type ProfileProgramCardProps = {
+  image: string;
+  title: string;
+  eventType: string;
+  brochure: string;
+  link: string;
+  date: string;
+};

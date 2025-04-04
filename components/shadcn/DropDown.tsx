@@ -25,8 +25,10 @@ import { Tooltip } from "../Tooltip";
 import Link from "next/link";
 import React from "react";
 import LogoutButton from "../logout/logout";
+import { auth } from "@/auth";
 
-export function DropdownMenu() {
+export async function DropdownMenu() {
+  const session = await auth();
   return (
     <DropdownMenuContainer>
       <Tooltip
@@ -36,8 +38,14 @@ export function DropdownMenu() {
       >
         <DropdownMenuTrigger asChild>
           <Avatar className="cursor-pointer">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
+              src={session?.user?.name || undefined}
+              alt={session?.user?.name || undefined}
+            />
+            <AvatarFallback>
+              {session?.user?.name?.slice(0, 2).toLocaleUpperCase() ||
+                "Me"}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
       </Tooltip>
@@ -45,7 +53,7 @@ export function DropdownMenu() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem to="/profile/user">
+          <DropdownMenuItem to="/profile/me">
             <User />
             <span>Profile</span>
           </DropdownMenuItem>

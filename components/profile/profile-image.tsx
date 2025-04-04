@@ -18,8 +18,14 @@ import { useEdgeStore } from "@/lib/edgestore";
 import { handleImageUploadErrors } from "@/lib/edge-store-helpers";
 import axios, { AxiosResponse } from "axios";
 
-export const ProfileImage = () => {
-  const [url, setUrl] = useState<string>("https://github.com/shadcn.png");
+export const ProfileImage = ({
+  pUrl,
+  fallback,
+}: {
+  pUrl: string;
+  fallback: string;
+}) => {
+  const [url, setUrl] = useState<string>(pUrl);
   const [tempUrl, setTempUrl] = useState<string>("");
   const [progress, setProgress] = useState<number>(0);
 
@@ -106,14 +112,16 @@ export const ProfileImage = () => {
           alt="Profile Image"
           className="object-cover"
         />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarFallback className="bg-stone-950 text-white">
+          {fallback?.slice(0, 2)}
+        </AvatarFallback>
       </Avatar>
 
       {/* Edit Icon */}
       <Dialog>
         <DialogTrigger asChild>
           <div className="absolute -top-5 -right-5 h-8 w-8 rounded-full flex justify-center items-center bg-black">
-            <UserRoundPen className="h-5 w-5 text-white cursor-pointer" />
+            <UserRoundPen className="h-3 w-3 sm:h-5 sm:w-5 text-white cursor-pointer" />
           </div>
         </DialogTrigger>
 
@@ -137,7 +145,9 @@ export const ProfileImage = () => {
                 src={tempUrl || url}
                 alt="New Profile Preview"
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback className="bg-stone-950 text-white">
+                {fallback?.slice(0, 2)}
+              </AvatarFallback>
             </Avatar>
             {/* File Input */}
             <Label htmlFor="profileImage" className="text-sm font-medium">

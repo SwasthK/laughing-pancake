@@ -151,7 +151,7 @@ async function fetchOldest(
           select: {
             title: true,
             image: true,
-            description: true,
+            eventType: true,
             organizedBy: true,
           },
         },
@@ -170,7 +170,7 @@ async function fetchOldest(
         programSlug: item.programSlug,
         title: item.Poster?.title ?? "",
         image: item.Poster?.image ?? "",
-        description: item.Poster?.description ?? "",
+        eventType: item.Poster?.eventType ?? "",
         organizedBy: item.Poster?.organizedBy ?? "",
       };
     });
@@ -205,7 +205,7 @@ async function fetchUpcomingFest(
           select: {
             title: true,
             image: true,
-            description: true,
+            eventType: true,
             organizedBy: true,
           },
         },
@@ -223,7 +223,7 @@ async function fetchUpcomingFest(
         programSlug: item.programSlug,
         title: item.Poster?.title ?? "",
         image: item.Poster?.image ?? "",
-        description: item.Poster?.description ?? "",
+        eventType: item.Poster?.eventType ?? "",
         organizedBy: item.Poster?.organizedBy ?? "",
       };
     });
@@ -255,7 +255,7 @@ async function fetchAll(
           select: {
             title: true,
             image: true,
-            description: true,
+            eventType: true,
             organizedBy: true,
           },
         },
@@ -273,7 +273,7 @@ async function fetchAll(
         programSlug: item.programSlug,
         title: item.Poster?.title ?? "",
         image: item.Poster?.image ?? "",
-        description: item.Poster?.description ?? "",
+        eventType: item.Poster?.eventType ?? "",
         organizedBy: item.Poster?.organizedBy ?? "",
       };
     });
@@ -295,7 +295,7 @@ async function fetchTrending(limit: number) {
           select: {
             title: true,
             image: true,
-            description: true,
+            eventType: true,
             organizedBy: true,
           },
         },
@@ -358,7 +358,7 @@ async function fetchTrending(limit: number) {
           programSlug: item.programSlug,
           title: item.Poster?.title ?? "",
           image: item.Poster?.image ?? "",
-          description: item.Poster?.description ?? "",
+          eventType: item.Poster?.eventType ?? "",
           organizedBy: item.Poster?.organizedBy ?? "",
         };
       })

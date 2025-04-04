@@ -33,8 +33,8 @@ export default function JoinedTeamCard({
   const router = useRouter();
 
   return (
-    <Card className="overflow-hidden bg-white flex flex-col h-full transition-all duration-300 hover:shadow-xl border border-gray-200 rounded-lg">
-      <div className="relative w-full h-48">
+    <Card className="overflow-hidden p-2 bg-white flex flex-col h-full transition-all duration-300 hover:shadow-xl border border-gray-200 rounded-lg">
+      <div className="relative w-full h-48 rounded-md overflow-hidden">
         <Image
           src={imageUrl}
           alt={`${teamName} event image`}
@@ -64,14 +64,14 @@ export default function JoinedTeamCard({
       <CardContent className="py-1 flex-grow">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <UserIcon className="h-4 w-4" />
-          <span className="font-medium">{organizedBy}</span>
+          <span className="font-medium">{organizedBy.toLocaleUpperCase()}</span>
         </div>
       </CardContent>
 
-      <CardFooter className="pt-3 flex gap-2 border-t border-gray-100 p-4">
+      <CardFooter className="py-4 px-0 sm:px-4  w-full flex justify-between items-center gap-2 border-t border-gray-100">
         <Button
           variant="default"
-          className="flex-1 bg-black hover:bg-gray-800 text-white"
+          className=" bg-black hover:bg-gray-800 text-white w-fit"
           onClick={() =>
             router.push(`/events/form/${programSlug}?teamKey=${teamKey}`)
           }
@@ -82,11 +82,11 @@ export default function JoinedTeamCard({
 
         <Button
           variant="outline"
-          className="flex-1 border-gray-300 hover:bg-gray-100 text-black"
+          className=" w-fit border-gray-300 hover:bg-gray-100 text-black"
           onClick={() => router.push(`/poster/${programSlug}`)}
         >
           <Info className="h-4 w-4 mr-2" />
-          View Details
+          Details
         </Button>
       </CardFooter>
     </Card>

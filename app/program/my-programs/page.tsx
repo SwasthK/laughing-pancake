@@ -22,10 +22,12 @@ export default function Page() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-start items-start gap-4 sm:gap-0 sm:justify-between sm:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Programs</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900">
+          My<span className="text-[#666666]"> Programs</span>
+          </h1>
+          <p className="text-sm mt-1">
             {hasPrograms
               ? `You have ${data?.data.length} ${data?.data.length === 1 ? "program" : "programs"}`
               : "Create your first program to get started"}

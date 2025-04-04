@@ -1,7 +1,13 @@
 import { PosterType } from "@/types";
 import { Copy, NotepadText, PhoneCall } from "lucide-react";
+import Link from "next/link";
 
-export const ContactInfo = ({ phoneNumber }: { phoneNumber: PosterType.Phone }) => (
+
+export const ContactInfo = ({
+  phoneNumber,
+}: {
+  phoneNumber: PosterType.Phone;
+}) => (
   <div className="bg-[#DADADA] rounded-xl w-full h-full py-8 px-8 flex flex-col justify-between md:flex-row gap-7">
     <BrochureSection />
     <PhoneSection phoneNumber={phoneNumber} />
@@ -18,13 +24,18 @@ export const BrochureSection = () => (
   </div>
 );
 
-export const PhoneSection = ({ phoneNumber }: { phoneNumber: PosterType.Phone }) => (
+export const PhoneSection = ({
+  phoneNumber,
+}: {
+  phoneNumber: PosterType.Phone;
+}) => (
   <div className="md:w-fit">
     <p className="text-sm mb-3">For any query about this event</p>
     <div className="flex items-center gap-4 relative">
-      <PhoneCall className="h-5 w-5" />
-      <p className="text-xl font-semibold">{phoneNumber}</p>
-      <CopyButton />
+      <Link href={`tel:${phoneNumber}`} className="flex items-center gap-2">
+        <PhoneCall className="h-5 w-5" />
+        <p className="text-xl font-semibold">{phoneNumber}</p>
+      </Link>
     </div>
   </div>
 );
