@@ -84,7 +84,7 @@ export const Label = ({ label, htmlFor, className, error }: FormLabelProps) => {
       htmlFor={htmlFor}
       className={cn(
         `${error ? "text-red-500" : "text-muted-foreground"} text-sm`,
-        className
+        className,
       )}
     >
       {error ? error : label}
@@ -540,7 +540,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
     toast.message(`Event removed successfully`);
     form.setValue(
       "events",
-      form.getValues("events").filter((_: any, i: number) => i !== index)
+      form.getValues("events").filter((_: any, i: number) => i !== index),
     );
     form.trigger("events");
   };
@@ -555,7 +555,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
     const updatedEvents = form
       .getValues("events")
       .map((event: newEventType, i: number) =>
-        i === index ? updatedEvent : event
+        i === index ? updatedEvent : event,
       );
 
     form.setValue("events", updatedEvents);
@@ -588,17 +588,17 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
   //   fetchHeads();
   // }, []);
 
-  const headsData = [
-    { roll: 220931, name: "Shainil" },
-    { roll: 220981, name: "Swasthik" },
-    { roll: 220982, name: "Carol" },
-    { roll: 220983, name: "Dave" },
-    { roll: 220984, name: "Eve" },
-    { roll: 220985, name: "Frank" },
-    { roll: 220988, name: "Grace" },
-    { roll: 220989, name: "Hank" },
-    { roll: 220990, name: "Ivy" },
-  ];
+  // const headsData = [
+  //   { roll: 220931, name: "Shainil" },
+  //   { roll: 220981, name: "Swasthik" },
+  //   { roll: 220982, name: "Carol" },
+  //   { roll: 220983, name: "Dave" },
+  //   { roll: 220984, name: "Eve" },
+  //   { roll: 220985, name: "Frank" },
+  //   { roll: 220988, name: "Grace" },
+  //   { roll: 220989, name: "Hank" },
+  //   { roll: 220990, name: "Ivy" },
+  // ];
 
   const handleValueChange = useDebouncedCallback(async (e: string) => {
     try {
@@ -758,7 +758,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
                               ></Label>
                               <Input
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) =>
                                   setNewEvent({
                                     ...newEvent,
@@ -777,7 +777,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
                               ></Label>
                               <Input
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) =>
                                   setNewEvent({
                                     ...newEvent,
@@ -814,7 +814,7 @@ export const CreateIndividualEventsBlock = ({ form }: { form: any }) => {
                                 maxLength={2}
                                 minLength={2}
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   const value: string = e.target.value;
                                   if (/^\d*$/.test(value)) {
@@ -943,13 +943,13 @@ const EditEventheads = ({
                     setHead((prevHead: { name: string; roll: number }[]) => {
                       const exists = prevHead?.some(
                         (e: { name: string; roll: number }) =>
-                          e.roll === Number(currentValue)
+                          e.roll === Number(currentValue),
                       );
                       if (exists) {
                         toast.message(`${key.name} removed as a head `);
                         return prevHead.filter(
                           (e: { name: string; roll: number }) =>
-                            e.roll != Number(currentValue)
+                            e.roll != Number(currentValue),
                         );
                       } else {
                         if (head?.length >= 2) {
@@ -974,7 +974,7 @@ const EditEventheads = ({
                       "ml-auto",
                       head.some((e: any) => e.name === key.name)
                         ? "opacity-100"
-                        : "opacity-0"
+                        : "opacity-0",
                     )}
                   />
                 </CommandItem>

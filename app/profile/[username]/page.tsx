@@ -8,7 +8,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import useSWR from "swr";
 import React from "react";
-import { Calendar, MapPin, Phone, User, Link2, FileText } from "lucide-react";
 import { ProfileProgramCardProps } from "@/types";
 import { ProfileProgramCard } from "@/components/profile-program-card/profile-program-card";
 
@@ -17,18 +16,12 @@ export default function Page() {
   const session = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-
-  if (!username?.includes("%40")) {
-    router.push("/not-found");
-    return null;
-  }
-
   const normalizedUsername =
     typeof username === "string"
       ? username.replace(/%40/g, "@").split("@")[0]
       : Array.isArray(username)
-      ? username[0]
-      : username;
+        ? username[0]
+        : username;
 
   useEffect(() => {
     if (session.status === "loading") return;
@@ -71,11 +64,16 @@ export default function Page() {
       shouldRetryOnError: false,
       revalidateOnFocus: false,
       dedupingInterval: 1000,
-    }
+    },
   );
 
   if (session.status === "loading") {
     return <div>Loading...</div>;
+  }
+
+  if (!username?.includes("%40")) {
+    router.push("/not-found");
+    return null;
   }
 
   // Handle error state
@@ -115,7 +113,7 @@ export default function Page() {
                   />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center text-white text-3xl font-bold">
-                    {normalizedUsername.charAt(0).toUpperCase()}
+                    {normalizedUsername?.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
@@ -149,7 +147,7 @@ export default function Page() {
                         date={program.Poster.date}
                       />
                     </Fragment>
-                  )
+                  ),
                 )}
               </div>
             </>
@@ -159,5 +157,3 @@ export default function Page() {
     </div>
   );
 }
-
-

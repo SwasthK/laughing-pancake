@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { HttpStatusCode } from "@/types";
 import { avatarUrlSchema } from "@/zod";
@@ -22,7 +21,7 @@ export async function PUT(request: Request) {
       },
       {
         status: HttpStatusCode.NotFound,
-      }
+      },
     );
   }
 
@@ -46,7 +45,7 @@ export async function PUT(request: Request) {
       },
       {
         status: HttpStatusCode.OK,
-      }
+      },
     );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -60,7 +59,7 @@ export async function PUT(request: Request) {
         },
         {
           status: HttpStatusCode.InternalServerError,
-        }
+        },
       );
     }
 
@@ -75,7 +74,7 @@ export async function PUT(request: Request) {
       },
       {
         status: HttpStatusCode.InternalServerError,
-      }
+      },
     );
   }
 }

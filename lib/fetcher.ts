@@ -17,7 +17,7 @@ export type FetchResponse<T = any> = {
 
 export const fetcher = async <T>(url: string): Promise<FetchResponse<T>> => {
   try {
-    const response = await axios.get<ApiResponse>(url);
+    const response = await axios.get<ApiResponse<T>>(url);
     const data = response.data;
 
     return {

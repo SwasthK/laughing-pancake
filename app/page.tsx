@@ -1,6 +1,4 @@
 import { FilterBar } from "@/components/fiterbar";
-import { hoteventsData } from "../lib/data";
-import { Carousel } from "@/components/hot-events";
 import EventListSection from "@/components/event-list/event-list-section";
 import { FilterProvider } from "./context/FilterProvider";
 

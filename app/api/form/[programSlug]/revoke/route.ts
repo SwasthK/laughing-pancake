@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
@@ -29,11 +28,11 @@ export async function POST(request: Request) {
     return Response.json(
       new ApiError(
         parseResult.error.errors[0].message,
-        parseResult.error.errors
+        parseResult.error.errors,
       ),
       {
         status: HttpStatusCode.BadRequest,
-      }
+      },
     );
   }
 
@@ -79,7 +78,7 @@ export async function POST(request: Request) {
       new ApiResponse("Unregistraion successful", participant),
       {
         status: HttpStatusCode.OK,
-      }
+      },
     );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -88,7 +87,7 @@ export async function POST(request: Request) {
         new ApiError("Failed to unregister", error.message),
         {
           status: HttpStatusCode.InternalServerError,
-        }
+        },
       );
     }
     if (error instanceof Error) console.error("Error:", error.stack);

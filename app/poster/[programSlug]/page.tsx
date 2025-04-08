@@ -10,14 +10,14 @@ import { fetcher, FetchResponse } from "@/lib/fetcher";
 import { Poster } from "@/types";
 import { Loader } from "lucide-react";
 import { JSONContent } from "novel";
-import { Usable, use } from "react";
+import { use } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
 export default function EventPoster({
   params,
 }: {
-  params: Usable<{ programSlug: string }>;
+  params: Promise<{ programSlug: string }>;
 }) {
   const { programSlug } = use(params);
   //default values

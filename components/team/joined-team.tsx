@@ -21,9 +21,7 @@ export default function JoinedTeams() {
           {" "}
           Joined<span className="text-[#666666]"> Teams</span>
         </h1>
-        <p className="text-sm">
-          Teams that you have joined as a participant
-        </p>
+        <p className="text-sm">Teams that you have joined as a participant</p>
       </div>
 
       {isLoading ? (
@@ -41,7 +39,7 @@ export default function JoinedTeams() {
             No joined teams
           </h3>
           <p className="text-gray-600 mb-4">
-            You haven't joined any teams yet.
+            You haven&apos;t joined any teams yet.
           </p>
         </div>
       ) : (
