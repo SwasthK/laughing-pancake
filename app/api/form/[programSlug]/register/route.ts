@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { getIdByEmail } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
@@ -29,11 +28,11 @@ export async function POST(request: Request) {
     return Response.json(
       new ApiError(
         parseResult.error.errors[0].message,
-        parseResult.error.errors
+        parseResult.error.errors,
       ),
       {
         status: HttpStatusCode.BadRequest,
-      }
+      },
     );
   }
 
@@ -96,7 +95,7 @@ export async function POST(request: Request) {
       new ApiResponse("Registration successful", participant),
       {
         status: HttpStatusCode.OK,
-      }
+      },
     );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -106,7 +105,7 @@ export async function POST(request: Request) {
           new ApiError("Already registered to other event", error.meta),
           {
             status: HttpStatusCode.BadRequest,
-          }
+          },
         );
       }
       return Response.json(new ApiError("Failed to register", error.message), {
@@ -123,6 +122,6 @@ export async function POST(request: Request) {
     },
     {
       status: HttpStatusCode.InternalServerError,
-    }
+    },
   );
 }

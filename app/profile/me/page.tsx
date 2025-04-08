@@ -12,7 +12,7 @@ import { profileUpdateSchema } from "@/zod";
 import { zodHandler } from "@/zod/resolve";
 import { KeyRound, Sparkle } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -32,7 +32,7 @@ export default function Page() {
     } else if (session.status === "authenticated") {
       toast.dismiss();
     }
-  }, [session.status]);
+  }, [session.status, router]);
 
   const { data, isLoading, error } = useSWR<FetchResponse<any>, FetchError>(
     session.status === "authenticated"
@@ -43,7 +43,7 @@ export default function Page() {
       shouldRetryOnError: false,
       revalidateOnFocus: false,
       dedupingInterval: 1000,
-    }
+    },
   );
 
   if (error) {
@@ -93,7 +93,7 @@ export default function Page() {
         loading: "Wait a moment...",
         success: (data) => data.message,
         error: (err) => err.message,
-      }
+      },
     );
     form.setValue("username", "");
     form.setValue("bio", "");

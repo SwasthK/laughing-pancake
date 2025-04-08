@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export async function GET(
   request: Request,
-  { params }: { params: { programSlug: string } }
+  { params }: { params: Promise<{ programSlug: string }> },
 ) {
   const programSlug = (await params).programSlug;
   const { searchParams } = new URL(request.url);
@@ -22,7 +22,7 @@ export async function GET(
       new ApiError(result.error.errors[0].message, result.error.errors),
       {
         status: HttpStatusCode.BadRequest,
-      }
+      },
     );
   }
 
@@ -120,7 +120,7 @@ export async function GET(
       new ApiResponse("Fetched the events for the team", formattedData),
       {
         status: HttpStatusCode.OK,
-      }
+      },
     );
   } catch (error) {
     if (error instanceof Error) console.error(error);

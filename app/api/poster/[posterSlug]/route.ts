@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   requst: NextRequest,
-  { params }: { params: { posterSlug: string } }
+  { params }: { params: Promise<{ posterSlug: string }> },
 ) {
   const posterSlug = (await params).posterSlug;
   if (!posterSlug) {
@@ -65,7 +65,7 @@ export async function GET(
       new ApiResponse("Poster fetched successfully", formattedEvent),
       {
         status: HttpStatusCode.OK,
-      }
+      },
     );
   } catch (error) {
     if (error instanceof Error) console.error(error.message);

@@ -1,9 +1,5 @@
 import { auth } from "@/auth";
-import {
-  generateTeamKey,
-  getIdByEmail,
-  getProgramIdBySlug,
-} from "@/lib/api-helper";
+import { generateTeamKey, getProgramIdBySlug } from "@/lib/api-helper";
 import { prisma } from "@/lib/prismaCleint";
 import { ApiError, ApiResponse } from "@/lib/response";
 import { HttpStatusCode } from "@/types";
@@ -29,11 +25,11 @@ export async function POST(request: Request) {
     return Response.json(
       new ApiError(
         "Invalid request body or missing program slug",
-        error.errors
+        error.errors,
       ),
       {
         status: HttpStatusCode.BadRequest,
-      }
+      },
     );
   }
   const programId = await getProgramIdBySlug(body.programSlug);
@@ -42,7 +38,7 @@ export async function POST(request: Request) {
       new ApiError("Program not found", { programSlug: body.programSlug }),
       {
         status: HttpStatusCode.NotFound,
-      }
+      },
     );
   }
 
@@ -60,7 +56,7 @@ export async function POST(request: Request) {
         new ApiError("Team not created", { teamName: body.teamName }),
         {
           status: HttpStatusCode.InternalServerError,
-        }
+        },
       );
     }
 
@@ -68,7 +64,7 @@ export async function POST(request: Request) {
       new ApiResponse("Team created successfully", { teamKey: team.teamKey }),
       {
         status: HttpStatusCode.OK,
-      }
+      },
     );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -76,7 +72,7 @@ export async function POST(request: Request) {
         new ApiError("you have already created a team", error.message),
         {
           status: HttpStatusCode.Conflict,
-        }
+        },
       );
     }
 
