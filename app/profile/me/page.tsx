@@ -12,6 +12,7 @@ import { profileUpdateSchema } from "@/zod";
 import { zodHandler } from "@/zod/resolve";
 import { KeyRound, Sparkle } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -205,10 +206,13 @@ export default function Page() {
                   <p className="text-sm text-gray-700 font-mono">
                     Passkey is used for the secured login!
                   </p>
-                  <button className="flex gap-2 mt-4 text-sm justify-start items-center bg-black text-white px-2 py-1.5 rounded-lg">
+                  <Link
+                    href="/web-auth"
+                    className="flex gap-2 mt-4 text-sm justify-start items-center bg-black text-white px-2 py-1.5 rounded-lg w-24"
+                  >
                     <Sparkle className="h-4 w-4" />
                     Generate
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

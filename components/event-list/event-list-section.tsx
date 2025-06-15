@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { EventCard } from "@/components/EventCard";
 import { queryType, type EventList } from "@/types";
 import { Fragment } from "react";
@@ -17,6 +17,7 @@ export default function EventListSection() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingTriggerRef = useRef<HTMLDivElement | null>(null);
   const limit = 9;
+  const prevFilterRef = useRef({ filter, department });
 
   const { data, isLoading, error, mutate } = useSWR<
     FetchResponse<EventList[]>,
@@ -33,17 +34,38 @@ export default function EventListSection() {
       },
       onSuccess: () => {
         setIsLoadingMore(false);
-      }
+      },
     },
   );
+
+  // Reset state when filter or department changes
+  useEffect(() => {
+    if (
+      prevFilterRef.current.filter !== filter ||
+      prevFilterRef.current.department !== department
+    ) {
+      setEventList([]);
+      setHasMore(true);
+      setPage(1);
+      setIsLoadingMore(false);
+      prevFilterRef.current = { filter, department };
+      mutate();
+    }
+  }, [filter, department, setPage, mutate]);
 
   useEffect(() => {
     if (data?.data) {
       setEventList((prev) => {
-        if (page === 1) {
+        // If it's a new filter or first page, replace the list
+        if (
+          page === 1 ||
+          prevFilterRef.current.filter !== filter ||
+          prevFilterRef.current.department !== department
+        ) {
           return data.data;
         }
 
+        // For subsequent pages, merge and deduplicate
         const merged = [...prev, ...data.data];
         return merged.filter(
           (event, index, self) =>
@@ -55,14 +77,7 @@ export default function EventListSection() {
       setHasMore(data.data.length >= limit);
       if (page === 2 && filter === queryType.trending) setHasMore(false);
     }
-  }, [data, page, filter]);
-
-  useEffect(() => {
-    setEventList([]); // Clear existing events when filter/department changes
-    setHasMore(() => true);
-    setPage(() => 1);
-    mutate(); // Refetch with new parameters
-  }, [department, filter, setPage, mutate]);
+  }, [data, page, filter, department]);
 
   useEffect(() => {
     if (error) {
@@ -71,37 +86,50 @@ export default function EventListSection() {
     }
   }, [error]);
 
-  // Instagram-style loading trigger
-  const loadMoreObserver = useCallback(() => {
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoading && !isLoadingMore) {
-          setIsLoadingMore(true);
-          // Small delay to ensure skeleton loaders are visible before the fetch completes
-          setTimeout(() => {
-            setPage((prev) => prev + 1);
-          }, 300);
-        }
-      },
-      { rootMargin: "200px 0px" } // Start loading before the element is fully visible
-    );
-
-    if (loadingTriggerRef.current) {
-      observerRef.current.observe(loadingTriggerRef.current);
-    }
-  }, [hasMore, isLoading, isLoadingMore, setPage]);
-
+  // Cleanup observer on unmount
   useEffect(() => {
-    loadMoreObserver();
-    
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
-  }, [loadMoreObserver, eventList]);
+  }, []);
+
+  // Reset and recreate observer when dependencies change
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          hasMore &&
+          !isLoading &&
+          !isLoadingMore
+        ) {
+          setIsLoadingMore(true);
+          setTimeout(() => {
+            setPage((prev) => prev + 1);
+          }, 300);
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+
+    observerRef.current = observer;
+
+    if (loadingTriggerRef.current) {
+      observer.observe(loadingTriggerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [hasMore, isLoading, isLoadingMore, setPage, filter, department]);
 
   if (error && eventList.length === 0) {
     return (
@@ -140,7 +168,7 @@ export default function EventListSection() {
 
       {/* Invisible loading trigger element */}
       {hasMore && !isLoading && (
-        <div 
+        <div
           ref={loadingTriggerRef}
           className="col-span-full h-20 w-full -mb-20"
           aria-hidden="true"
