@@ -3,7 +3,6 @@ import { Link } from "./Link";
 import { EventList } from "@/types";
 import Image from "next/image";
 import { ChevronsRight, NotepadText } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function EventCard({
   title,
