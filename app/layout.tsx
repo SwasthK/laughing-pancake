@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Festify",
+  title: "Jetara",
   description: "An application for all your fests.",
 };
 
