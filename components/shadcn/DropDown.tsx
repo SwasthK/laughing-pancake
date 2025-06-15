@@ -43,8 +43,7 @@ export async function DropdownMenu() {
               alt={session?.user?.name || undefined}
             />
             <AvatarFallback>
-              {session?.user?.name?.slice(0, 2).toLocaleUpperCase() ||
-                "Me"}
+              {session?.user?.name?.slice(0, 2).toLocaleUpperCase() || "Me"}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

@@ -2,7 +2,6 @@ import { IconSearch } from "@tabler/icons-react";
 import { Link as CustomLink } from "./Link";
 import Link from "next/link";
 import { DropdownMenu } from "./shadcn/DropDown";
-import { ThemeToggle } from "./theme-provider";
 import { SearchCommandPallete } from "./command-pallete";
 
 const NavItems = [
@@ -22,38 +21,37 @@ const NavItems = [
 
 export function NavigationBar() {
   return (
-    <div className="sticky top-[0px]  z-50 py-5  rounded-t-none border-[rgba(255,255,255,0.125)] border mt-3 lg:px-6 flex text-white justify-between backdrop-blur-sm backdrop-saturate-0  gap-2 flex-wrap items-center w-full rounded-lg ">
+    <div className="sticky top-[0px] z-50 py-4 rounded-lg border border-[#E6E4E4] dark:border-[#2A2A2A] mt-3 lg:px-6 flex justify-between backdrop-blur-sm backdrop-saturate-150 gap-2 flex-wrap items-center w-full bg-[#F3F1F0]/80 dark:bg-[#1A1A1A]/80">
       <Link
         href={"/"}
-        className="font-trebuchet text-3xl font-extrabold  text-black"
+        className="group font-serif text-3xl font-black text-[#262728] dark:text-white hover:text-[#262728]/90 dark:hover:text-white/90 transition-all duration-300 hover:scale-105"
       >
-        Festify
+        <span className="relative">
+          Festify
+          <div className="absolute -bottom-1 left-0 h-0.5 w-0 bg-[#262728] dark:bg-white transition-all duration-300 group-hover:w-full" />
+        </span>
       </Link>
 
       <div>
-        <div className="justify-end hidden lg:flex text-sm w-full lg:w-fit lg:space-x-3 rounded-md lg:bg-white bg-[#262728] px-2 py-1 text-gray-700 items-center font-normal">
+        <div className="justify-end hidden lg:flex text-sm w-full lg:w-fit lg:space-x-3 rounded-md bg-[#F3F1F0] dark:bg-[#262728] px-3 py-2 text-[#262728] dark:text-white items-center font-medium">
           <>
             {NavItems.map((item) => (
               <CustomLink
                 key={item.name}
-                className="bg-transparent hover:bg-[#54ea54] text-secondary-dark hover:text-black rounded-md lg:px-4 py-1.5 transition-colors duration-300 ease-in"
+                className="bg-transparent hover:bg-[#262728]/10 dark:hover:bg-white/10 text-[#262728] dark:text-white hover:text-[#262728]/90 dark:hover:text-white/90 rounded-md lg:px-4 py-1.5 transition-all duration-300 hover:scale-105 hover:shadow-sm"
                 href={`${item.href}`}
               >
-                <p> {item.name}</p>
+                {item.name}
               </CustomLink>
             ))}
-            <SearchCommandPallete className="bg-[#262728] text-sm flex justify-between gap-2 hover:bg-[#54ea54] text-white hover:text-black rounded-md lg:px-4  transition-colors duration-300 ease-in h-fit py-1.5">
-              <IconSearch className="h-4 w-4 lg:h-[1.15rem] lg:w-[1.15rem]"></IconSearch>
-              <p className="text-sm ">Ctrl + K</p>
+            <SearchCommandPallete className="bg-[#262728] dark:bg-white text-white dark:text-[#262728] flex justify-between gap-2 hover:bg-[#262728]/90 dark:hover:bg-white/90 rounded-md lg:px-4 transition-all duration-300 h-fit py-1.5 hover:scale-105 hover:shadow-md">
+              <IconSearch className="h-4 w-4 lg:h-[1.15rem] lg:w-[1.15rem] transition-transform duration-300 hover:rotate-12" />
+              <p className="text-sm">Ctrl + K</p>
             </SearchCommandPallete>
           </>
         </div>
       </div>
       <div className="flex gap-3 items-center">
-        <SearchCommandPallete className="bg-[#262728] h-10">
-          <IconSearch className=""></IconSearch>
-        </SearchCommandPallete>
-        <ThemeToggle></ThemeToggle>
         <DropdownMenu />
       </div>
     </div>
