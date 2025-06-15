@@ -27,7 +27,7 @@ export function NavigationBar() {
         className="group font-serif text-3xl font-black text-[#262728] dark:text-white hover:text-[#262728]/90 dark:hover:text-white/90 transition-all duration-300 hover:scale-105"
       >
         <span className="relative">
-          Festify
+          Jetara
           <div className="absolute -bottom-1 left-0 h-0.5 w-0 bg-[#262728] dark:bg-white transition-all duration-300 group-hover:w-full" />
         </span>
       </Link>

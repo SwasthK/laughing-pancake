@@ -14,7 +14,7 @@ export default function SupportPage() {
         </p>
 
         <p className="mt-2 font-mono text-violet-900 font-semibold cursor-pointer">
-          support.festify@gmail.com
+          support.jetara@gmail.com
         </p>
       </div>
 
@@ -30,7 +30,7 @@ export default function SupportPage() {
         </p>
 
         <p className="mt-2 font-mono text-violet-900 font-semibold cursor-pointer">
-          https://github.com/festify
+          https://github.com/jetara
         </p>
       </div>
 
